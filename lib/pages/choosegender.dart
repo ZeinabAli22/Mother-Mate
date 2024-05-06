@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -131,6 +133,10 @@ Widget _FourSection(BuildContext context) {
                 child: GestureDetector(
                   onTap: openHomeScreenGirl,
                   child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.pink[100],
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -152,10 +158,6 @@ Widget _FourSection(BuildContext context) {
                         ),
                       ],
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: Colors.pink[100],
-                    ),
                   ),
                 ),
               ),
@@ -166,6 +168,10 @@ Widget _FourSection(BuildContext context) {
                 child: GestureDetector(
                   onTap: openHomeScreenBoy,
                   child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.blue[200],
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -186,10 +192,6 @@ Widget _FourSection(BuildContext context) {
                           height: 10,
                         ),
                       ],
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: Colors.blue[200],
                     ),
                   ),
                 ),

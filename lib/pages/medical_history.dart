@@ -10,6 +10,10 @@ class MedicalHistoryScreen extends StatefulWidget {
 }
 
 class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
+  void openAllergieScreen() {
+    Navigator.pushNamed(context, 'allergies_screen');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,19 +169,28 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                       ),
                     ]),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, 'vaccenation_screen');
+                  },
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 //5th category
 
-                const MedicalCateg(
-                    img: 'asset/images/image 45.png', title: 'Medical History'),
+                InkWell(
+                  child: const MedicalCateg(
+                      img: 'asset/images/image 45.png',
+                      title: 'Medical History'),
+                  onTap: () {
+                    Navigator.pushNamed(context, 'medical_perspective');
+                  },
+                ),
                 const SizedBox(
                   height: 20,
                 ),
                 InkWell(
+                  onTap: openAllergieScreen,
                   child: Container(
                     height: 90,
                     padding: const EdgeInsets.symmetric(
@@ -213,7 +226,6 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                       ),
                     ]),
                   ),
-                  onTap: () {},
                 ),
               ]),
         ),

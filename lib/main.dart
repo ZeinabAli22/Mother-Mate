@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:proj_app/auth_page.dart';
 import 'package:proj_app/babyroutine/baby_routine.dart';
+import 'package:proj_app/pages/Allergy/allergies_screen.dart';
+import 'package:proj_app/pages/Allergy/allergy.dart';
 import 'package:proj_app/pages/doctors_screen.dart';
 import 'package:proj_app/pages/entertainment.dart';
 import 'package:proj_app/pages/games.dart';
 // import 'package:proj_app/pages/jump.dart';
 import 'package:proj_app/pages/medical_history.dart';
+import 'package:proj_app/pages/medical_perspective.dart';
 import 'package:proj_app/pages/storie_screen.dart';
+import 'package:proj_app/pages/Vaccenation/vaccenation_screen.dart';
 import 'firebase_options.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:proj_app/layout/home_layout.dart';
@@ -59,6 +63,10 @@ class MyApp extends StatelessWidget {
         'baby_routine': (context) => const BabyRoutineScreen(),
         'storie_screen': (context) => const StoriesScreen(),
         'games': (context) => const GamesScreen(),
+        'vaccenation_screen': (context) => const VaccenationScreen(),
+        'allergies_screen': (context) => const AllergiesScreen(),
+        'allergy': (context) => const Allergy(),
+        'medical_perspective': (context) => const MedicalPerscription(),
       },
     );
   }
