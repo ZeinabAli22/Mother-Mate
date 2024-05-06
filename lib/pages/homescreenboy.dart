@@ -302,9 +302,9 @@ class CategoryCard extends StatelessWidget {
     required this.svgSrc,
     required this.title,
   });
-  void openCommunityScreen() {
-    // Navigator.pushNamed(context as BuildContext, '/home_layout');
-  }
+  // void openCommunityScreen() {
+  //   // Navigator.pushNamed(context as BuildContext, '/home_layout');
+  // }
 
   @override
   Widget build(BuildContext context) {
