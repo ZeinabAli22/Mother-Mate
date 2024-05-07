@@ -45,7 +45,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       future: FirebaseFirestore.instance.collection('users').doc(comment['uid']).get(),
                       builder: (context, userSnapshot) {
                         if (!userSnapshot.hasData) {
-                          return SizedBox(); // Placeholder widget or loading indicator
+                          return SizedBox();
                         }
                         var username = userSnapshot.data!['username'];
                         return ListTile( leading: CircleAvatar(

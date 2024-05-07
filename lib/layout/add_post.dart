@@ -35,9 +35,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
         'ownerUid': uid,
         'Time': formattedTime,
         'likesicon':false,
-        'likes': [], // Array to store user IDs
-        'likesCount': 0, // Integer to store the count of likes
-        'comments': [], // Array to store user IDs
+        'likes': [],
+        'likesCount': 0,
+        'comments': [],
         'commentsCount': 0,
       });
 
@@ -96,7 +96,6 @@ setState(() {
           children: [
             Row(
               children: [
-                //UserName and Circle Avatar
                 const CircleAvatar(
                   radius: 20,
                   backgroundImage: NetworkImage(
@@ -137,7 +136,7 @@ setState(() {
               ),
             ),
       Row(
-        mainAxisAlignment: MainAxisAlignment.end, // Aligns the Row to the end of the screen
+        mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Spacer(),
           FloatingActionButton(
@@ -146,11 +145,10 @@ setState(() {
                 print('post empty');
                 final snackBar = SnackBar(
                   content: Text("Post is empty"),
-                  duration: Duration(seconds: 2), // Duration for which the Snackbar will be shown
-                  backgroundColor: Colors.red, // Background color of the Snackbar
+                  duration: Duration(seconds: 2),
+                  backgroundColor: Colors.red,
                 );
 
-// Find the ScaffoldMessenger in the widget tree and use it to show a SnackBar.
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
               } else {
