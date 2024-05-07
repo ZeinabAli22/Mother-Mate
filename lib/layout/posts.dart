@@ -1,452 +1,393 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Posts extends StatelessWidget {
+import 'comment_screen.dart';
+
+class Posts extends StatefulWidget {
   const Posts({super.key});
 
   @override
+  State<Posts> createState() => _PostsState();
+}
+
+
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User? user = auth.currentUser;
+final String? uid = user?.uid;
+
+class _PostsState extends State<Posts> {
+  Future<List<DocumentSnapshot>> fetchPosts() async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('posts').get();
+    return querySnapshot.docs;
+  }
+
+  Future<void> deletePost(String postId) async {
+    DocumentSnapshot postDoc =
+        await FirebaseFirestore.instance.collection('posts').doc(postId).get();
+
+    if (postDoc.exists) {
+      Map<String, dynamic>? postData = postDoc.data()
+          as Map<String, dynamic>?;
+      if (postData != null && postData['ownerUid'] == uid) {
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(postId)
+            .delete();
+
+        print('Post deleted successfully');
+        final snackBar = SnackBar(
+          content: Text("Post deleted successfully"),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        final snackBar = SnackBar(
+          content:
+              Text("Error: You do not have permission to delete this post"),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        print('Error: You do not have permission to delete this post.');
+      }
+    } else {
+      print('Error: Post not found.');
+    }
+  }
+
+  bool isLiked = false;
+
+  Future<void> addLike(String postId) async {
+    DocumentSnapshot postSnapshot =
+        await FirebaseFirestore.instance.collection('posts').doc(postId).get();
+
+    if (postSnapshot.exists && postSnapshot.data() is Map<String, dynamic>) {
+      Map<String, dynamic> data = postSnapshot.data() as Map<String, dynamic>;
+      List<dynamic> likes = data['likes'] ??
+          [];
+      isLiked = likes.contains(
+          uid);
+      if (isLiked) {
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(postId)
+            .update({
+          'likes': FieldValue.arrayRemove([uid]),
+          'likesicon': false,
+          'likesCount': FieldValue.increment(-1),
+        });
+      } else {
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(postId)
+            .update({
+          'likes': FieldValue.arrayUnion([uid]),
+          'likesicon': true,
+          'likesCount': FieldValue.increment(1),
+        });
+      }
+    } else {
+      final snackBar = SnackBar(
+        content:
+        Text("Error"),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  Future<void> addComment(String postId, String commentText) async {
+    await FirebaseFirestore.instance.collection('posts').doc(postId).update({
+      'comments': FieldValue.arrayUnion([
+        {
+          'uid': uid,
+          'comment': commentText,
+        },
+      ]),
+    });
+    final snackBar = SnackBar(
+      content: Text("Your comment has been successfully added"),
+      duration: Duration(seconds: 2),
+      backgroundColor: Colors.green,
+      behavior: SnackBarBehavior.floating,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    await FirebaseFirestore.instance.collection('posts').doc(postId).update({
+      'commentsCount': FieldValue.increment(1),
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPosts();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Card(
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            elevation: 10.0,
-            margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Row(
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              DocumentSnapshot post = snapshot.data!.docs[index];
+              return _buildItem(post, context);
+            },
+          );
+        }
+        return Center(
+            child: Icon(
+          Icons.compost_sharp,
+          size: 50,
+        ));
+      },
+    );
+  }
+
+  Widget _buildItem(DocumentSnapshot post, BuildContext context) {
+    String postId = post.id;
+    String postContent = post['post'];
+    String userName = post['name'];
+    String formattedTime = post['Time'];
+    bool likeicon = post['likesicon'];
+    int likesCount = post['likesCount'];
+    int commentsCount = post['commentsCount'];
+    TextEditingController commentController = TextEditingController();
+
+    return Card(
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      elevation: 10.0,
+      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(
+                      'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg'),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //UserName and Circle Avatar
+                      Text(
+                        '${userName}',
+                        style: TextStyle(
+                            height: 1.4,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16),
+                      ),
+                      Text(
+                        '${formattedTime}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(height: 1.4),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 15),
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          child: ListView(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shrinkWrap: true,
+                            children: [
+                              'Delete',
+                            ]
+                                .map(
+                                  (e) => InkWell(
+                                    onTap: () {
+                                      deletePost(postId);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 16),
+                                      child: Text(e),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.more_vert_sharp,
+                      size: 16.0,
+                    )),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
+              child: Container(
+                width: double.infinity,
+              ),
+            ),
+            Text(
+              '${postContent}',
+              style: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                  height: 1.3),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Row(
+                          children: [
+                            Icon(
+                              likeicon
+                                  ? Icons.favorite
+                                  : Icons.favorite_border_rounded,
+                              size: 16,
+                              color: Colors.red,
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              '${likesCount.toString()}',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        addLike(postId);
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: InkWell(
+                        onTap: (){Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) => CommentsScreen(postId: postId),
+    ),
+    );
+    },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const Icon(
+                              Icons.mode_comment_rounded,
+                              size: 16,
+                              color: Colors.amber,
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              '${commentsCount.toString()}',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Container(
+                width: double.infinity,
+                height: 1.0,
+                color: Colors.grey[300],
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
                       const CircleAvatar(
-                        radius: 20,
+                        radius: 15,
                         backgroundImage: NetworkImage(
                             'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg'),
                       ),
                       const SizedBox(width: 15),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Mamy Malak',
-                              style: TextStyle(
-                                  height: 1.4,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.transparent),
+                          ),
+                          child: TextField(
+                            controller: commentController,
+                            decoration: InputDecoration(
+                              hintText: 'Write a comment...',
+                              hintStyle: TextStyle(color: Colors.grey),
+                              border: InputBorder.none,
                             ),
-                            Text(
-                              'Januray 22, 2024 at 11:00 pm',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(height: 1.4),
-                            ),
-                          ],
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 15),
-                      //Delete Button
                       IconButton(
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => Dialog(
-                                child: ListView(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  shrinkWrap: true,
-                                  children: [
-                                    'Delete',
-                                  ]
-                                      .map(
-                                        (e) => InkWell(
-                                          onTap: () {},
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 12, horizontal: 16),
-                                            child: Text(e),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              ),
-                            );
+                            if (commentController.text.isNotEmpty) {
+                              addComment(postId, commentController.text);
+                              commentController.clear();
+                            } else {
+                              final snackBar = SnackBar(
+                                content: Text("Comment is empty!"),
+                                duration: Duration(seconds: 2),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            }
+
                           },
-                          icon: const Icon(
-                            Icons.more_vert_sharp,
-                            size: 16.0,
-                          )),
+                          icon: Icon(
+                            Icons.send,
+                            color: Colors.blue,
+                            size: 20,
+                          ))
                     ],
                   ),
-                  //Posts Containt
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
-                    child: Container(
-                      width: double.infinity,
-                    ),
-                  ),
-                  const Text(
-                    'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-                    style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                        height: 1.3),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: Row(
-                                children: [
-                                  // //Like Button
-                                  const Icon(
-                                    Icons.favorite_border_rounded,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    '120',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            onTap: () {},
-                          ),
-                        ),
-                        //Comment Button
-                        Expanded(
-                          child: InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  // //Comment Button
-                                  const Icon(
-                                    Icons.mode_comment_rounded,
-                                    size: 16,
-                                    color: Colors.amber,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    '120 Comment',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            onTap: () {},
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      width: double.infinity,
-                      height: 1.0,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          child: Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 15,
-                                backgroundImage: NetworkImage(
-                                    'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg'),
-                              ),
-                              const SizedBox(width: 15),
-                              Text(
-                                'write a comment ....',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                          onTap: () {},
-                        ),
-                      ),
-                      InkWell(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Row(
-                            children: [
-                              // //Like Button
-                              const Icon(
-                                Icons.favorite_border_rounded,
-                                size: 16,
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                'Likes',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-
-          //Second Post With Image
-          const SizedBox(
-            height: 10,
-          ),
-
-          Card(
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            elevation: 10.0,
-            margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      //UserName and Circle Avatar
-                      const CircleAvatar(
-                        radius: 20,
-                        backgroundImage: NetworkImage(
-                            'https://i.pinimg.com/564x/70/ec/0a/70ec0acd2c93815e92a6f90e016d1e5b.jpg'),
-                      ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Mamy Malak',
-                              style: TextStyle(
-                                  height: 1.4,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16),
-                            ),
-                            Text(
-                              'Januray 22, 2024 at 11:00 pm',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(height: 1.4),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 15),
-                      //Delete Button
-                      IconButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => Dialog(
-                                child: ListView(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  shrinkWrap: true,
-                                  children: [
-                                    'Delete',
-                                  ]
-                                      .map(
-                                        (e) => InkWell(
-                                          onTap: () {},
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 12, horizontal: 16),
-                                            child: Text(e),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.more_vert_sharp,
-                            size: 16.0,
-                          )),
-                    ],
-                  ),
-                  //Posts Containt
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
-                    child: Container(
-                      width: double.infinity,
-                    ),
-                  ),
-                  const Text(
-                    'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-                    style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                        height: 1.3),
-                  ),
-
-                  //Image Post
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Container(
-                      height: 170,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.0),
-                        image: const DecorationImage(
-                          image: NetworkImage(
-                              'https://i.pinimg.com/564x/1f/2a/63/1f2a63f8b09c22e53a5d118c3779738e.jpg'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: Row(
-                                children: [
-                                  // //Like Button
-                                  const Icon(
-                                    Icons.favorite_border_rounded,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    '120',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            onTap: () {},
-                          ),
-                        ),
-                        //Comment Button
-                        Expanded(
-                          child: InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  // //Comment Button
-                                  const Icon(
-                                    Icons.mode_comment_rounded,
-                                    size: 16,
-                                    color: Colors.amber,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    '120 Comment',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            onTap: () {},
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      width: double.infinity,
-                      height: 1.0,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          child: Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 15,
-                                backgroundImage: NetworkImage(
-                                    'https://i.pinimg.com/564x/70/ec/0a/70ec0acd2c93815e92a6f90e016d1e5b.jpg'),
-                              ),
-                              const SizedBox(width: 15),
-                              Text(
-                                'write a comment ....',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                          onTap: () {},
-                        ),
-                      ),
-                      InkWell(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Row(
-                            children: [
-                              // //Like Button
-                              const Icon(
-                                Icons.favorite_border_rounded,
-                                size: 16,
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                'Likes',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          //End of Second Post
-
-          const SizedBox(
-            height: 100,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

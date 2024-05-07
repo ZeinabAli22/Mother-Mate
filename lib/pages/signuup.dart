@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,16 +14,38 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   // final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final Name = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  Future signUp() async {
+  // Future signUp() async {
+  //   if (passwordConfirmed()) {
+  //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  //         email: _emailController.text.trim(),
+  //         password: _passwordController.text.trim());
+  //     Navigator.of(context).pushNamed('/');
+  //   }
+  // }
+
+
+
+  Future<void> signUp() async {
+    print('start');
     if (passwordConfirmed()) {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
-      Navigator.of(context).pushNamed('/');
-    }
+
+      final UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+
+    await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+      'username': Name.text.trim(),
+      'email':  _emailController.text.trim(),
+    });
+    Navigator.of(context).pushNamed('/');
+      print('done');
+
+  }
   }
 
   bool passwordConfirmed() {
@@ -95,6 +118,37 @@ class _SignUpState extends State<SignUp> {
                         // const SizedBox(height: 20),
                         //Email Textfield
                         // const CustomEmail(),
+                        Container(
+                          height: 42,
+                          width: 340,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF2F2F2),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 0),
+                            child: Center(
+                              child: TextFormField(
+                                //controller
+                                controller: Name,
+                                keyboardType: TextInputType.text,
+                                onFieldSubmitted: (value) {},
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "User Name",
+                                  prefixIcon: Icon(
+                                    Icons.person,
+                                    color: Colors.black26,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        //end of Email Textfield
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Container(
                           height: 42,
                           width: 340,
