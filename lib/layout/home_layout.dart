@@ -61,28 +61,6 @@ class _HomeLayoutState extends State<HomeLayout> {
                 child: Icon(Icons.chat_bubble),
                 label: 'Chats',
               ),
-            ])
-
-        // bottomNavigationBar: CurvedNavigationBar(
-        //   backgroundColor: Colors.blueAccent,
-        //  animationDuration: const Duration(milliseconds: 300),
-        //  on
-
-        //     // type: BottomNavigationBarType.fixed,
-        //     currentIndex: currentIndex,
-        //     onTap: (value) {
-        //       setState(() {
-        //         currentIndex = value;
-        //       });
-        //     },
-        //     items: const [
-        //       BottomNavigationBarItem(
-        //           icon: Icon(Icons.home_rounded), label: 'Home'),
-        //       BottomNavigationBarItem(
-        //           icon: Icon(Icons.add), label: ' Create Post'),
-        //       BottomNavigationBarItem(
-        //           icon: Icon(Icons.chat_bubble), label: 'Chats'),
-        //     ]),
-        );
+            ]));
   }
 }

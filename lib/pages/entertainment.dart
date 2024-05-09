@@ -1,8 +1,13 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proj_app/pages/Ai-Engine/ai_screen.dart';
+import 'package:proj_app/pages/games.dart';
+import 'package:proj_app/pages/storie_screen.dart';
 
 class EntertainScreen extends StatefulWidget {
   const EntertainScreen({super.key});
@@ -112,38 +117,112 @@ class _EntertainScreenState extends State<EntertainScreen> {
                           childAspectRatio: .85,
                           crossAxisSpacing: 15,
                           mainAxisSpacing: 15,
+                          shrinkWrap: true,
                           children: [
-                            InkWell(
-                              child: const GridIteam(
-                                  title: 'Stories',
-                                  img: 'asset/images/image 8.png'),
-                              onTap: () {
-                                Navigator.pushNamed(context, 'storie_screen');
-                              },
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => StoriesScreen())),
+                              child: cat(
+                                  widget: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'asset/images/image 8.png',
+                                    scale: 2,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Stories',
+                                    style: GoogleFonts.inter(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.indigo),
+                                  ),
+                                ],
+                              )),
                             ),
-                            InkWell(
-                              child: const GridIteam(
-                                  title: 'Games',
-                                  img: 'asset/images/image 9.png'),
-                              onTap: () {
-                                Navigator.pushNamed(context, 'games');
-                              },
+                            //Second Category
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GamesScreen())),
+                              child: cat(
+                                  widget: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'asset/images/image 9.png',
+                                    scale: 2,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Games',
+                                    style: GoogleFonts.inter(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.indigo),
+                                  ),
+                                ],
+                              )),
                             ),
-                            InkWell(
-                              child: const GridIteam(
-                                  title: 'Videos',
-                                  img: 'asset/images/image 10.png'),
-                              onTap: () {
-                                Navigator.pushNamed(context, 'homescreenboy');
-                              },
+                            //third
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GamesScreen())),
+                              child: cat(
+                                  widget: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'asset/images/image 10.png',
+                                    scale: 2,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Videos',
+                                    style: GoogleFonts.inter(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.indigo),
+                                  ),
+                                ],
+                              )),
                             ),
-                            InkWell(
-                              child: const GridIteam(
-                                  title: 'AI-Engine',
-                                  img: 'asset/images/image 884.png'),
-                              onTap: () {
-                                Navigator.pushNamed(context, 'homescreenboy');
-                              },
+                            //FourthCategory
+
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AiEngineScreen())),
+                              child: cat(
+                                  widget: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset('asset/images/image 884.png'),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'AI-Engine',
+                                    style: GoogleFonts.inter(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.indigo),
+                                  ),
+                                ],
+                              )),
                             ),
                           ],
                         ),
@@ -227,4 +306,29 @@ class GridIteam extends StatelessWidget {
       ),
     );
   }
+}
+
+//Widget Cat
+
+Widget cat({required Widget widget}) {
+  return Container(
+      height: 170,
+      width: 175,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10),
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+          ),
+          border: Border.all(color: Colors.indigo),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.white,
+              blurRadius: 4,
+              offset: Offset(1, 1),
+            )
+          ]),
+      alignment: Alignment.center,
+      child: widget);
 }

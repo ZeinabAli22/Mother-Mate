@@ -96,6 +96,10 @@ Widget _buildThreeSection(BuildContext context) {
 }
 
 Widget _FourSection(BuildContext context) {
+  // void openHomeScreen() {
+  //   Navigator.of(context).pushNamed('homeboy');
+  // }
+
   void openHomeScreenBoy() {
     Navigator.of(context).pushNamed('homescreenboy');
   }
@@ -167,6 +171,10 @@ Widget _FourSection(BuildContext context) {
               Expanded(
                 child: GestureDetector(
                   onTap: openHomeScreenBoy,
+                  // onTap: openHomeScreen,
+                  // onTap: () {
+                  //   Navigator.pushNamed(context, 'homescreen');
+                  // },
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),

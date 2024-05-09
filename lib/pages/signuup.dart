@@ -27,25 +27,29 @@ class _SignUpState extends State<SignUp> {
   //   }
   // }
 
-
+  void openAboutMother() {
+    Navigator.of(context).pushNamed('aboutMother');
+  }
 
   Future<void> signUp() async {
     print('start');
     if (passwordConfirmed()) {
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
-      final UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-    );
-
-    await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-      'username': Name.text.trim(),
-      'email':  _emailController.text.trim(),
-    });
-    Navigator.of(context).pushNamed('/');
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'username': Name.text.trim(),
+        'email': _emailController.text.trim(),
+      });
+      Navigator.of(context).pushNamed('/');
       print('done');
-
-  }
+    }
   }
 
   bool passwordConfirmed() {
@@ -265,7 +269,8 @@ class _SignUpState extends State<SignUp> {
                                 // onTap: () {
                                 //   Navigator.pushNamed(context, "/choosegender");
                                 // },
-                                onTap: signUp,
+                                // onTap: signUp,
+                                onTap: openAboutMother,
                                 child: Text(
                                   "Sign Up",
                                   style: GoogleFonts.poppins(

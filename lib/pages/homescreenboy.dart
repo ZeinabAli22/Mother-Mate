@@ -49,6 +49,7 @@ class _HomeScreenBState extends State<HomeScreenB> {
                         fontSize: 35,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
+                        // color: Colors.black
                       )),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 20),
@@ -100,6 +101,8 @@ class _HomeScreenBState extends State<HomeScreenB> {
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.indigo,
+                            // color: Colors.white,
+                            // color: Color(0xFF002950),
                             borderRadius: BorderRadius.circular(15),
                             boxShadow: const [
                               BoxShadow(
@@ -134,6 +137,7 @@ class _HomeScreenBState extends State<HomeScreenB> {
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
+                                      // color: Colors.black
                                     ),
                                   ),
                                 ],
@@ -145,6 +149,8 @@ class _HomeScreenBState extends State<HomeScreenB> {
                         Container(
                           decoration: BoxDecoration(
                             color: const Color.fromARGB(255, 4, 105, 11),
+                            // color: Colors.white,
+                            // color: Color(0xFF002950),
                             borderRadius: BorderRadius.circular(15),
                             boxShadow: const [
                               BoxShadow(
@@ -180,6 +186,7 @@ class _HomeScreenBState extends State<HomeScreenB> {
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
+                                      // color: Colors.black,
                                     ),
                                   ),
                                 ],
@@ -192,6 +199,8 @@ class _HomeScreenBState extends State<HomeScreenB> {
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.blueGrey[900],
+                            // color: Colors.white,
+                            // color: Color(0xFF002950),
                             borderRadius: BorderRadius.circular(15),
                             boxShadow: const [
                               BoxShadow(
@@ -227,6 +236,7 @@ class _HomeScreenBState extends State<HomeScreenB> {
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
+                                      // color: Colors.black,
                                     ),
                                   ),
                                 ],
@@ -311,6 +321,8 @@ class CategoryCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 182, 76, 76),
+        // color: Colors.white,
+        // color: Color(0xFF002950),
         borderRadius: BorderRadius.circular(15),
         boxShadow: const [
           BoxShadow(
@@ -345,6 +357,7 @@ class CategoryCard extends StatelessWidget {
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
+                  // color: Colors.black,
                 ),
               )
             ],

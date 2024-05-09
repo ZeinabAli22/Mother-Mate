@@ -5,9 +5,13 @@ import 'package:proj_app/auth_page.dart';
 import 'package:proj_app/babyroutine/baby_routine.dart';
 import 'package:proj_app/pages/Allergy/allergies_screen.dart';
 import 'package:proj_app/pages/Allergy/allergy.dart';
+import 'package:proj_app/pages/Ai-Engine/ai_screen.dart';
+import 'package:proj_app/pages/About/aboutBaby.dart';
+import 'package:proj_app/pages/About/aboutMother.dart';
 import 'package:proj_app/pages/doctors_screen.dart';
 import 'package:proj_app/pages/entertainment.dart';
 import 'package:proj_app/pages/games.dart';
+import 'package:proj_app/pages/homescreen.dart';
 // import 'package:proj_app/pages/jump.dart';
 import 'package:proj_app/pages/medical_history.dart';
 import 'package:proj_app/pages/medical_perspective.dart';
@@ -33,7 +37,6 @@ Future<void> main() async {
   );
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
-
   );
   runApp(const MyApp());
 }
@@ -57,6 +60,7 @@ class MyApp extends StatelessWidget {
         "signup": (context) => const Signup(),
         "signuup": (context) => const SignUp(),
         "choosegender": (context) => const ChooseGender(),
+        'homescreen': (context) => const Home(),
         "homescreenboy": (context) => const HomeScreenB(),
         "homescreengirl": (context) => const HomeScreenG(),
         "home_layout": (context) => const HomeLayout(),
@@ -72,6 +76,9 @@ class MyApp extends StatelessWidget {
         'allergies_screen': (context) => const AllergiesScreen(),
         'allergy': (context) => const Allergy(),
         'medical_perspective': (context) => const MedicalPerscription(),
+        'ai_screen': (context) => const AiEngineScreen(),
+        'aboutMother': (context) => const AboutMother(),
+        'aboutBaby': (context) => const AboutBaby(),
       },
     );
   }
