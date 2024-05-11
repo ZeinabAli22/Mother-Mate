@@ -1,6 +1,12 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'Sign.dart';
 
 class HomeScreenB extends StatefulWidget {
   const HomeScreenB({Key? key}) : super(key: key);
@@ -20,10 +26,42 @@ class _HomeScreenBState extends State<HomeScreenB> {
   void openInstructionScreen() {
     Navigator.pushNamed(context, 'Instruction');
   }
+  late String username = 'loading...';
+
+  Future<void> getUserData() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final String? uid = user?.uid;
+
+    if (uid != null) {
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      setState(() {
+        username = userData['username'];
+      });
+      print(' Email: ${userData['email']}');
+      print(' username: ${userData['username']}');
+    } else {
+      print('No user is currently signed in.');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.blue[300],
+      // Change this color to the desired one
+      statusBarIconBrightness:
+      Brightness.dark, // Change the status bar icons' color (dark or light)
+    ));
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.blue[300],
@@ -51,24 +89,32 @@ class _HomeScreenBState extends State<HomeScreenB> {
                         color: Colors.white,
                         // color: Colors.black
                       )),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: "Search",
-                        icon: SvgPicture.asset('asset/images/search.svg'),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
                   const SizedBox(
-                    height: 15,
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "Welcome back ",
+                        textAlign: TextAlign.start,
+                        style: GoogleFonts.poppins(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ), Text(
+                        "$username ! ",
+                        textAlign: TextAlign.start,
+                        style: GoogleFonts.poppins(
+                          color:  Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(
+                    height: 30,
                   ),
                   Row(
                     children: [
@@ -80,8 +126,31 @@ class _HomeScreenBState extends State<HomeScreenB> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      Spacer(), // Add Spacer to push the button to the right
+                      ElevatedButton(
+                        onPressed: () {
+                          // Implement logout logic here
+                          // For example, navigate to the signup screen
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => Signup(), // Replace Signup with your actual signup screen
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(Colors.red), // Set the background color to red
+                        ),
+                        child: Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
+
                   const SizedBox(
                     height: 10,
                   ),
@@ -222,13 +291,11 @@ class _HomeScreenBState extends State<HomeScreenB> {
                                   const Image(
                                     image:
                                         AssetImage("asset/images/Instruct.png"),
-                                    height: 100,
-                                    width: 100,
+                                    height: 80,
+                                    width: 80,
                                   ),
                                   // Spacer(),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
+
                                   Text(
                                     "Mother\nInstructions",
                                     textAlign: TextAlign.center,
@@ -263,35 +330,52 @@ class _HomeScreenBState extends State<HomeScreenB> {
                       ),
                     ],
                   ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    height: 90,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(13),
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      autoPlay: true, // Enable auto play
+                      autoPlayInterval: Duration(seconds: 3), // Set auto play interval
+                      height: 125,
+                      enlargeCenterPage: false,
+                      aspectRatio: 16 / 9,
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      enableInfiniteScroll: true,
                     ),
-                    child: Row(
-                      children: [
-                        const Image(
-                            image: AssetImage('asset/images/Image.png')),
-                        Expanded(
-                            child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Dr.Mazen",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "About 800m Away from your Location",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 15, fontWeight: FontWeight.w400),
-                            ),
-                          ],
-                        ))
-                      ],
-                    ),
+                    items: [
+                      // Add multiple instances of your Container with different data
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 20),
+                          height: 125,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(13),
+                          ),
+                          child: Row(
+                            children: [
+                              const Image(
+                                  image: AssetImage('asset/images/Image.png')),
+                              Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Dr.Mazen",
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 20, fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        "About 800m Away from your Location",
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 15, fontWeight: FontWeight.w400),
+                                      ),
+                                    ],
+                                  ))
+                            ],
+                          ),
+                        ),
+                      ),                      // Add more instances of your container as needed
+                    ],
                   ),
                 ],
               ),

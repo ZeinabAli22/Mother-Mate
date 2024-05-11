@@ -37,7 +37,7 @@ class _SoothingMainState extends State<SoothingMain> {
             ],
           ),
         ),
-        body: const TabBarView(
+        body:  TabBarView(
           children: [SoothingSleeping(), SoothingSummary()],
         ),
       ),

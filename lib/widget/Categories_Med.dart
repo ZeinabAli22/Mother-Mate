@@ -36,7 +36,7 @@ class MedicalCateg extends StatelessWidget {
                 title,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
-                  fontSize: 25,
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
                 ),

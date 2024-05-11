@@ -15,6 +15,7 @@ import 'package:proj_app/pages/homescreen.dart';
 // import 'package:proj_app/pages/jump.dart';
 import 'package:proj_app/pages/medical_history.dart';
 import 'package:proj_app/pages/medical_perspective.dart';
+import 'package:proj_app/pages/schedual_screen.dart';
 import 'package:proj_app/pages/storie_screen.dart';
 import 'package:proj_app/pages/Vaccenation/vaccenation_screen.dart';
 import 'firebase_options.dart';
@@ -59,6 +60,7 @@ class MyApp extends StatelessWidget {
         // "sign": (context) => const Sign(),
         "signup": (context) => const Signup(),
         "signuup": (context) => const SignUp(),
+        "ScheduleScreen": (context) =>  ScheduleScreen(),
         "choosegender": (context) => const ChooseGender(),
         'homescreen': (context) => const Home(),
         "homescreenboy": (context) => const HomeScreenB(),

@@ -154,22 +154,6 @@ class _BabyRoutineScreenState extends State<BabyRoutineScreen> {
                         color: Colors.white,
                       )),
                   //search barrr
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: "Search",
-                        icon: SvgPicture.asset('asset/images/search.svg'),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
                   const SizedBox(
                     height: 10,
                   ),

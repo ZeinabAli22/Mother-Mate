@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proj_app/widget/health_category.dart';
@@ -10,8 +12,33 @@ class DoctorScreen extends StatefulWidget {
   @override
   State<DoctorScreen> createState() => _DoctorScreenState();
 }
-
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User? user = auth.currentUser;
+final String? uid = user?.uid;
 class _DoctorScreenState extends State<DoctorScreen> {
+  late String Username = 'loading...';
+
+  Future<void> getUserData() async {
+
+
+    if (uid!= null) {
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      setState(() {
+        Username =userData['username'];
+
+      });
+      print(' Email: ${userData['email']}');
+      print(' username: ${userData['username']}');
+    } else {
+      print('No user is currently signed in.');
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +57,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
                 width: 10,
               ),
               Text(
-                'Hi, Malek',
+                'Hi, $Username',
                 style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
