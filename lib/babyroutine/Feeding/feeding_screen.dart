@@ -14,7 +14,7 @@ class _FeedingMainState extends State<FeedingMain> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.black),
@@ -35,9 +35,7 @@ class _FeedingMainState extends State<FeedingMain> {
               Tab(
                 text: "SOLIDS",
               ),
-              Tab(
-                text: "SUMMARY",
-              ),
+
             ],
           ),
         ),
@@ -45,7 +43,6 @@ class _FeedingMainState extends State<FeedingMain> {
           children: [
             FeedingBottle(),
             FeedingSolid(),
-            FeedingSummary(),
           ],
         ),
       ),
