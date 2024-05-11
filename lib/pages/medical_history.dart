@@ -113,7 +113,8 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                     ]),
                   ),
                   onTap: () {
-                    Navigator.pushNamed(context, 'doctor_screen');
+                    // Navigator.pushNamed(context, 'doctor_screen');
+                    Navigator.pushNamed(context, 'test');
                   },
                 ),
 

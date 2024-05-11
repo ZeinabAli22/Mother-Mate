@@ -10,13 +10,16 @@ import 'package:proj_app/pages/About/aboutBaby.dart';
 import 'package:proj_app/pages/About/aboutMother.dart';
 import 'package:proj_app/pages/doctors_screen.dart';
 import 'package:proj_app/pages/entertainment.dart';
+import 'package:proj_app/pages/Games/game.dart';
 import 'package:proj_app/pages/games.dart';
 import 'package:proj_app/pages/homescreen.dart';
+import 'package:proj_app/pages/link.dart';
 // import 'package:proj_app/pages/jump.dart';
 import 'package:proj_app/pages/medical_history.dart';
 import 'package:proj_app/pages/medical_perspective.dart';
 import 'package:proj_app/pages/storie_screen.dart';
 import 'package:proj_app/pages/Vaccenation/vaccenation_screen.dart';
+import 'package:proj_app/pages/Videos/videos.dart';
 import 'firebase_options.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:proj_app/layout/home_layout.dart';
@@ -25,9 +28,9 @@ import 'package:proj_app/pages/Instruction.dart';
 import 'package:proj_app/pages/Sign.dart';
 // import 'package:proj_app/pages/Signup.dart';
 import 'package:proj_app/pages/choosegender.dart';
-import 'package:proj_app/pages/entert.dart';
+import 'package:proj_app/pages/Girls/entert.dart';
 import 'package:proj_app/pages/homescreenboy.dart';
-import 'package:proj_app/pages/homescreengirl.dart';
+import 'package:proj_app/pages/Girls/homescreengirl.dart';
 import 'package:proj_app/pages/signuup.dart';
 
 Future<void> main() async {
@@ -65,7 +68,7 @@ class MyApp extends StatelessWidget {
         "homescreengirl": (context) => const HomeScreenG(),
         "home_layout": (context) => const HomeLayout(),
         "Instruction": (context) => const InstructionScreen(),
-        "entert": (context) => EnterScreenB(),
+        "entert": (context) => const EntertainmentGirl(),
         "entertainment": (context) => const EntertainScreen(),
         "medical_history": (context) => const MedicalHistoryScreen(),
         "doctor_screen": (context) => const DoctorScreen(),
@@ -79,6 +82,9 @@ class MyApp extends StatelessWidget {
         'ai_screen': (context) => const AiEngineScreen(),
         'aboutMother': (context) => const AboutMother(),
         'aboutBaby': (context) => const AboutBaby(),
+        'test': (context) => const Test(),
+        'game': (context) => const GameScreen(),
+        'videos': (context) => const VideosScreen(),
       },
     );
   }

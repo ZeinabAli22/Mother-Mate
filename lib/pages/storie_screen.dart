@@ -1,6 +1,10 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-// import 'package:url_launcher/url_launcher.dart';
+import 'package:proj_app/widget/appcolor.dart';
+import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:proj_app/widget/data.dart';
 import 'dart:math';
 
@@ -50,34 +54,44 @@ class _StoriesScreenState extends State<StoriesScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white, size: 30),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          title: Text(
+            'Stories',
+            style: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
+          ),
+        ),
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 12, right: 12, top: 30, bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, 'entertainment');
-                        },
-                        icon: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 30.0,
-                        )),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.search,
-                          color: Colors.white,
-                          size: 30.0,
-                        )),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(
+              //       left: 12, right: 12, top: 30, bottom: 8),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       IconButton(
+              //           onPressed: () {
+              //             Navigator.pushNamed(context, 'entertainment');
+              //           },
+              //           icon: const Icon(
+              //             Icons.arrow_back,
+              //             color: Colors.white,
+              //             size: 30.0,
+              //           )),
+              //       IconButton(
+              //           onPressed: () {},
+              //           icon: const Icon(
+              //             Icons.search,
+              //             color: Colors.white,
+              //             size: 30.0,
+              //           )),
+              //     ],
+              //   ),
+              // ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
@@ -201,49 +215,21 @@ class _StoriesScreenState extends State<StoriesScreen> {
               // ListView
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10),
-                child: InkWell(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          decoration: const BoxDecoration(color: Colors.white),
-                          child: Row(
-                            children: [
-                              const Image(
-                                image:
-                                    AssetImage('asset/images/Magic Pot.jpeg'),
-                                height: 85.0,
-                                width: 80.0,
-                                // fit: BoxFit.cover,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Magic Pot Bedtime Story',
-                                    style: GoogleFonts.inter(
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  Text(
-                                    '5:32 Min',
-                                    style: GoogleFonts.inter(
-                                        fontWeight: FontWeight.w300),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Link(
+                      uri: Uri.parse(
+                          'https://www.bing.com/videos/riverview/relatedvideo?q=magic+pot+story&mid=F2B6C3F8CD82D3E6DE35F2B6C3F8CD82D3E6DE35&FORM=VIRE'),
+                      builder: (context, followlink) => GestureDetector(
+                        onTap: followlink,
+                        child: Card(
+                            imagPath: 'asset/images/Magic Pot.jpeg',
+                            title: 'Magic Pot Bedtime',
+                            info: '5:32 Min'),
                       ),
-                    ],
-                  ),
-                  // onTap: () => _launchURL(
-                  //     Uri.parse('https://www.youtube.com/watch?v=ADi7F695d90'),
-                  //     false),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(
@@ -257,44 +243,41 @@ class _StoriesScreenState extends State<StoriesScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          decoration: const BoxDecoration(color: Colors.white),
-                          child: Row(
-                            children: [
-                              const Image(
-                                image: AssetImage('asset/images/Rabbit.jpg'),
-                                height: 85.0,
-                                width: 80.0,
-                                // fit: BoxFit.cover,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Rabbit',
-                                    style: GoogleFonts.inter(
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  Text(
-                                    '5:32 Min',
-                                    style: GoogleFonts.inter(
-                                        fontWeight: FontWeight.w300),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                      Link(
+                        uri: Uri.parse(
+                            'https://www.youtube.com/watch?v=ADi7F695d90'),
+                        builder: (context, followlink) => GestureDetector(
+                          onTap: followlink,
+                          child: Card(
+                              imagPath: 'asset/images/Rabbit.jpg',
+                              title: 'Rabbit',
+                              info: '5:32 Min'),
                         ),
                       ),
                     ],
                   ),
-                  // onTap: () => _launchURL(
-                  //     Uri.parse('https://www.youtube.com/watch?v=ADi7F695d90'),
-                  //     false),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Link(
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=pf_xz7GFCHw'),
+                      builder: (context, followlink) => InkWell(
+                        onTap: followlink,
+                        child: Card(
+                            imagPath: 'asset/images/Little.jpg',
+                            title: 'The Little Maremaid',
+                            info: '5:30 Min'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -417,4 +400,47 @@ class CardScrollWidget extends StatelessWidget {
       }),
     );
   }
+}
+
+Widget Card({required String imagPath, required String title, required info}) {
+  return Container(
+    decoration: const BoxDecoration(
+      // gradient: LinearGradient(
+      //   colors: [Color(0xFF1b1e44), Color(0xFF2d3447)],
+      //   begin: Alignment.bottomCenter,
+      //   end: Alignment.topCenter,
+      // ),
+      color: Color(0xFF1b1e44),
+    ),
+    child: Row(
+      children: [
+        Image(
+          image: AssetImage(imagPath),
+          height: 85.0,
+          width: 80.0,
+          // fit: BoxFit.cover,
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.inter(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  color: Colors.white),
+            ),
+            Text(
+              info,
+              style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w300, color: AppColors.lightGrey),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }

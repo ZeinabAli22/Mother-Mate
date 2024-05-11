@@ -39,15 +39,16 @@ class _ChooseGenderState extends State<ChooseGender> {
           child: SizedBox(
             width: 443,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 const SizedBox(
-                  height: 100,
+                  height: 300,
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: _buildThreeSection(context),
-                  ),
-                ),
+                // Expanded(
+                //   child: SingleChildScrollView(
+                //     child: _buildThreeSection(context),
+                //   ),
+                // ),
                 const SizedBox(
                   height: 250,
                 ),

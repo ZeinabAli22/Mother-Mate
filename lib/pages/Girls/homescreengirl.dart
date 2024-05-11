@@ -143,7 +143,9 @@ class HomeScreenG extends StatelessWidget {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(context, 'entert');
+                              },
                               child: Column(
                                 children: <Widget>[
                                   const SizedBox(

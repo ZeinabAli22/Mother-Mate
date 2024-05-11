@@ -7,26 +7,27 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proj_app/pages/Ai-Engine/ai_screen.dart';
 import 'package:proj_app/pages/Games/game.dart';
-import 'package:proj_app/pages/storie_screen.dart';
 import 'package:proj_app/pages/Videos/videos.dart';
+import 'package:proj_app/pages/storie_screen.dart';
 
-class EntertainScreen extends StatefulWidget {
-  const EntertainScreen({super.key});
+class EntertainmentGirl extends StatefulWidget {
+  const EntertainmentGirl({super.key});
 
   @override
-  State<EntertainScreen> createState() => _EntertainScreenState();
+  State<EntertainmentGirl> createState() => _EntertainmentGirlState();
 }
 
-class _EntertainScreenState extends State<EntertainScreen> {
+class _EntertainmentGirlState extends State<EntertainmentGirl> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Colors.blue[200],
+          backgroundColor: Colors.pink[100],
           appBar: AppBar(
-            backgroundColor: Colors.blue[200],
+            backgroundColor: Colors.pink[100],
             elevation: 0.0,
+            iconTheme: IconThemeData(color: Colors.pink),
             title: Column(
               children: [
                 Padding(
@@ -71,7 +72,7 @@ class _EntertainScreenState extends State<EntertainScreen> {
               Container(
                 height: size.height * .45,
                 decoration: BoxDecoration(
-                  color: Colors.blue[200],
+                  color: Colors.pink[100],
                 ),
               ),
               SafeArea(
@@ -105,7 +106,7 @@ class _EntertainScreenState extends State<EntertainScreen> {
                             style: GoogleFonts.poppins(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue[800]),
+                                color: Colors.pinkAccent),
                           ),
                         ],
                       ),
@@ -141,7 +142,7 @@ class _EntertainScreenState extends State<EntertainScreen> {
                                     style: GoogleFonts.inter(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.indigo),
+                                        color: Colors.pink),
                                   ),
                                 ],
                               )),
@@ -168,7 +169,7 @@ class _EntertainScreenState extends State<EntertainScreen> {
                                     style: GoogleFonts.inter(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.indigo),
+                                        color: Colors.pink),
                                   ),
                                 ],
                               )),
@@ -195,7 +196,7 @@ class _EntertainScreenState extends State<EntertainScreen> {
                                     style: GoogleFonts.inter(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.indigo),
+                                        color: Colors.pink),
                                   ),
                                 ],
                               )),
@@ -220,7 +221,7 @@ class _EntertainScreenState extends State<EntertainScreen> {
                                     style: GoogleFonts.inter(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.indigo),
+                                        color: Colors.pink),
                                   ),
                                 ],
                               )),
@@ -235,7 +236,7 @@ class _EntertainScreenState extends State<EntertainScreen> {
             ],
           ),
           bottomNavigationBar: CurvedNavigationBar(
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: Colors.pinkAccent.shade100,
               animationDuration: const Duration(milliseconds: 300),
               onTap: (index) {
                 // print(index);
@@ -259,56 +260,6 @@ class _EntertainScreenState extends State<EntertainScreen> {
   }
 }
 
-class GridIteam extends StatelessWidget {
-  final String title;
-  final String img;
-  const GridIteam({super.key, required this.title, required this.img});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 50),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(10),
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10)),
-        boxShadow: const [
-          BoxShadow(
-              offset: Offset(0.8, 0.8),
-              color: Colors.white,
-              blurRadius: 17,
-              spreadRadius: -23),
-        ],
-        border: Border.all(color: Colors.indigo, width: 1.5),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Image(
-              image: AssetImage(img),
-              width: 90,
-              height: 90,
-              fit: BoxFit.contain,
-            ),
-            // const SizedBox(
-            //   height: 8,
-            // ),
-            Text(
-              title,
-              style: GoogleFonts.inter(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.indigo),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 //Widget Cat
 
 Widget cat({required Widget widget}) {
@@ -322,7 +273,7 @@ Widget cat({required Widget widget}) {
             topLeft: Radius.circular(10),
             topRight: Radius.circular(10),
           ),
-          border: Border.all(color: Colors.indigo),
+          border: Border.all(color: Colors.pink),
           boxShadow: const [
             BoxShadow(
               color: Colors.white,
