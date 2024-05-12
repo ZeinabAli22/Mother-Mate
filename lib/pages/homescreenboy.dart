@@ -1,9 +1,11 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'Sign.dart';
@@ -26,6 +28,7 @@ class _HomeScreenBState extends State<HomeScreenB> {
   void openInstructionScreen() {
     Navigator.pushNamed(context, 'Instruction');
   }
+
   late String username = 'loading...';
 
   Future<void> getUserData() async {
@@ -34,8 +37,10 @@ class _HomeScreenBState extends State<HomeScreenB> {
     final String? uid = user?.uid;
 
     if (uid != null) {
-      final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      final DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final Map<String, dynamic> userData =
+          userDoc.data() as Map<String, dynamic>;
       setState(() {
         username = userData['username'];
       });
@@ -59,7 +64,7 @@ class _HomeScreenBState extends State<HomeScreenB> {
       statusBarColor: Colors.blue[300],
       // Change this color to the desired one
       statusBarIconBrightness:
-      Brightness.dark, // Change the status bar icons' color (dark or light)
+          Brightness.dark, // Change the status bar icons' color (dark or light)
     ));
 
     return SafeArea(
@@ -78,17 +83,35 @@ class _HomeScreenBState extends State<HomeScreenB> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: <Widget>[
-                  const SizedBox(
-                    height: 15,
+                  // const SizedBox(
+                  //   height: 15,
+                  // ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Mother Mate",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            // color: Colors.black
+                          )),
+                      // const SizedBox(
+                      //   width: ,
+                      // ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, 'profile_screen');
+                        },
+                        child: CircleAvatar(
+                          radius: 20,
+                          backgroundImage: NetworkImage(
+                              'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'),
+                        ),
+                      )
+                    ],
                   ),
-                  Text("Mother Mate",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        // color: Colors.black
-                      )),
                   const SizedBox(
                     height: 20,
                   ),
@@ -101,18 +124,18 @@ class _HomeScreenBState extends State<HomeScreenB> {
                           fontSize: 25,
                           fontWeight: FontWeight.w700,
                         ),
-                      ), Text(
+                      ),
+                      Text(
                         "$username ! ",
                         textAlign: TextAlign.start,
                         style: GoogleFonts.poppins(
-                          color:  Colors.white,
+                          color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-
                   const SizedBox(
                     height: 30,
                   ),
@@ -133,12 +156,14 @@ class _HomeScreenBState extends State<HomeScreenB> {
                           // For example, navigate to the signup screen
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => Signup(), // Replace Signup with your actual signup screen
+                              builder: (context) =>
+                                  Signup(), // Replace Signup with your actual signup screen
                             ),
                           );
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.red), // Set the background color to red
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.red), // Set the background color to red
                         ),
                         child: Text(
                           'Logout',
@@ -150,7 +175,6 @@ class _HomeScreenBState extends State<HomeScreenB> {
                       ),
                     ],
                   ),
-
                   const SizedBox(
                     height: 10,
                   ),
@@ -333,7 +357,8 @@ class _HomeScreenBState extends State<HomeScreenB> {
                   CarouselSlider(
                     options: CarouselOptions(
                       autoPlay: true, // Enable auto play
-                      autoPlayInterval: Duration(seconds: 3), // Set auto play interval
+                      autoPlayInterval:
+                          Duration(seconds: 3), // Set auto play interval
                       height: 125,
                       enlargeCenterPage: false,
                       aspectRatio: 16 / 9,
@@ -357,24 +382,26 @@ class _HomeScreenBState extends State<HomeScreenB> {
                                   image: AssetImage('asset/images/Image.png')),
                               Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Dr.Mazen",
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 20, fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        "About 800m Away from your Location",
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 15, fontWeight: FontWeight.w400),
-                                      ),
-                                    ],
-                                  ))
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Dr.Mazen",
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "About 800m Away from your Location",
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                ],
+                              ))
                             ],
                           ),
                         ),
-                      ),                      // Add more instances of your container as needed
+                      ), // Add more instances of your container as needed
                     ],
                   ),
                 ],

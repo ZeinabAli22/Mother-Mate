@@ -1,8 +1,22 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Jump extends StatelessWidget {
+class Jump extends StatefulWidget {
   const Jump({super.key});
+
+  @override
+  State<Jump> createState() => _JumpState();
+}
+
+class _JumpState extends State<Jump> {
+  @override
+  void initState() {
+    Future.delayed(Duration(seconds: 3)).then(
+        (value) => Navigator.pushReplacementNamed(context, 'onboarding_page'));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,25 +107,25 @@ class Jump extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 53),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, "signup");
-              },
-              style: ButtonStyle(
-                alignment: Alignment.bottomRight,
-                backgroundColor: MaterialStateProperty.all(Colors.white),
-                foregroundColor: const MaterialStatePropertyAll(Colors.black),
-                padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 55, vertical: 5)),
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50))),
-              ),
-              child: Text("Get Started",
-                  style: GoogleFonts.poppins(
-                      fontSize: 24, fontWeight: FontWeight.w600)),
-            ),
-          ),
+          // Center(
+          //   child: ElevatedButton(
+          //     onPressed: () {
+          //       // Navigator.pushNamed(context, 'signup');
+          //     },
+          //     style: ButtonStyle(
+          //       alignment: Alignment.bottomRight,
+          //       backgroundColor: MaterialStateProperty.all(Colors.white),
+          //       foregroundColor: const MaterialStatePropertyAll(Colors.black),
+          //       padding: MaterialStateProperty.all(
+          //           const EdgeInsets.symmetric(horizontal: 55, vertical: 5)),
+          //       shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(50))),
+          //     ),
+          //     child: Text("Get Started",
+          //         style: GoogleFonts.poppins(
+          //             fontSize: 24, fontWeight: FontWeight.w600)),
+          //   ),
+          // ),
         ],
       ),
     );

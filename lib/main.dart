@@ -8,19 +8,23 @@ import 'package:proj_app/pages/Allergy/allergy.dart';
 import 'package:proj_app/pages/Ai-Engine/ai_screen.dart';
 import 'package:proj_app/pages/About/aboutBaby.dart';
 import 'package:proj_app/pages/About/aboutMother.dart';
+import 'package:proj_app/pages/Onboarding/onboarding_page.dart';
 import 'package:proj_app/pages/doctors_screen.dart';
 import 'package:proj_app/pages/entertainment.dart';
 import 'package:proj_app/pages/Games/game.dart';
 import 'package:proj_app/pages/games.dart';
 import 'package:proj_app/pages/homescreen.dart';
+import 'package:proj_app/pages/jump.dart';
 import 'package:proj_app/pages/link.dart';
 // import 'package:proj_app/pages/jump.dart';
 import 'package:proj_app/pages/medical_history.dart';
 import 'package:proj_app/pages/medical_perspective.dart';
+import 'package:proj_app/pages/profile_screen.dart';
 import 'package:proj_app/pages/schedual_screen.dart';
 import 'package:proj_app/pages/storie_screen.dart';
 import 'package:proj_app/pages/Vaccenation/vaccenation_screen.dart';
 import 'package:proj_app/pages/Videos/videos.dart';
+import 'package:proj_app/pages/update_profile_screen.dart';
 import 'firebase_options.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:proj_app/layout/home_layout.dart';
@@ -58,12 +62,12 @@ class MyApp extends StatelessWidget {
       // home: Auth(),
       // initialRoute: "/",
       routes: {
-        '/': (context) => const Auth(),
-        // "/": (context) => const Jump(),
+        // '/': (context) => const Auth(),
+        "/": (context) => const Jump(),
         // "sign": (context) => const Sign(),
         "signup": (context) => const Signup(),
         "signuup": (context) => const SignUp(),
-        "ScheduleScreen": (context) =>  ScheduleScreen(),
+        "ScheduleScreen": (context) => ScheduleScreen(),
         "choosegender": (context) => const ChooseGender(),
         'homescreen': (context) => const Home(),
         "homescreenboy": (context) => const HomeScreenB(),
@@ -87,6 +91,10 @@ class MyApp extends StatelessWidget {
         'test': (context) => const Test(),
         'game': (context) => const GameScreen(),
         'videos': (context) => const VideosScreen(),
+        'jump': (context) => const Jump(),
+        'onboarding_page': (context) => const OnBoardingPage(),
+        'profile_screen': (context) => ProfileScreen(),
+        'update_profile': (context) => UpdateProfileScreen(),
       },
     );
   }
