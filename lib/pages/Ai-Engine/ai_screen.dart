@@ -4,13 +4,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:proj_app/widget/appcolor.dart';
 
 class AiEngineScreen extends StatefulWidget {
-  const AiEngineScreen({super.key});
-
-  // Color color;
-  // Widget child;
+  const AiEngineScreen({Key? key}) : super(key: key);
 
   @override
   State<AiEngineScreen> createState() => _AiEngineScreenState();
+}
+final Random _random = Random();
+
+int randomPercentage(int min, int max) {
+  return min + _random.nextInt(max - min + 1);
 }
 
 class _AiEngineScreenState extends State<AiEngineScreen>
@@ -18,9 +20,27 @@ class _AiEngineScreenState extends State<AiEngineScreen>
   late AnimationController _controller;
 
   Color color = AppColors.greenColor.withOpacity(0.4);
+
+
+  final List<Map<String, dynamic>> crySituations = [
+    {'situation': 'Hungry', 'percentage': randomPercentage(20, 60)},
+    {'situation': 'Tired', 'percentage': randomPercentage(20, 60)},
+    {'situation': 'Needs a diaper change', 'percentage': randomPercentage(20, 60)},
+    {'situation': 'In pain', 'percentage': randomPercentage(20, 60)},
+    {'situation': 'Bored', 'percentage': randomPercentage(20, 60)},
+    {'situation': 'Lonely', 'percentage': randomPercentage(20, 60)},
+    {'situation': 'Too hot', 'percentage': randomPercentage(20, 60)},
+    {'situation': 'Too cold', 'percentage': randomPercentage(20, 60)},
+    {'situation': 'Overstimulated', 'percentage': randomPercentage(20, 60)},
+    {'situation': 'Understimulated', 'percentage': randomPercentage(20, 60)},
+  ];
+
   @override
   void initState() {
     super.initState();
+    for (int i = 0; i < crySituations.length; i++) {
+      crySituations[i]['percentage'] = randomPercentage(20, 60);
+    }
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
@@ -30,10 +50,7 @@ class _AiEngineScreenState extends State<AiEngineScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Color(0xFFA7AEF9),
       appBar: AppBar(
-        // backgroundColor: Colors.purple[800],
-        // backgroundColor: AppColors.purpleecolor,
         backgroundColor: AppColors.greenColor,
         elevation: 0.0,
         title: Text(
@@ -54,7 +71,6 @@ class _AiEngineScreenState extends State<AiEngineScreen>
               style: GoogleFonts.inter(
                 fontWeight: FontWeight.bold,
                 fontSize: 30,
-                // color: Colors.white,
               ),
             ),
             const SizedBox(
@@ -65,7 +81,6 @@ class _AiEngineScreenState extends State<AiEngineScreen>
               style: GoogleFonts.inter(
                 fontWeight: FontWeight.w500,
                 fontSize: 20,
-                // color: Colors.white,
               ),
             ),
             const SizedBox(
@@ -80,16 +95,18 @@ class _AiEngineScreenState extends State<AiEngineScreen>
                   borderRadius: BorderRadius.circular(200),
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                        gradient: RadialGradient(colors: [
-                      color,
-                      // widget.color.withOpacity(0.5),
-                      Color.lerp(color, Colors.black, 0.2)!
-                    ])),
+                      gradient: RadialGradient(colors: [
+                        color,
+                        Color.lerp(color, Colors.black, 0.2)!
+                      ]),
+                    ),
                     child: ScaleTransition(
                       scale: Tween<double>(begin: 0.4, end: 1.0).animate(
-                          CurvedAnimation(
-                              parent: _controller,
-                              curve: const _CustomCurve())),
+                        CurvedAnimation(
+                          parent: _controller,
+                          curve: const _CustomCurve(),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -98,25 +115,149 @@ class _AiEngineScreenState extends State<AiEngineScreen>
             const SizedBox(
               height: 40,
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.mic,
-                    // color: Colors.white38,
-                    size: 30,
-                  )),
+            ElevatedButton(
+              onPressed: _analyzeCry,
+              child: Icon(Icons.mic ,color: Colors.black54,),
             ),
           ],
         ),
       ),
     );
   }
-}
+
+  void _analyzeCry() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Listening...',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                CircularProgressIndicator(),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.of(context).pop();
+
+      crySituations.shuffle();
+
+      List<Widget> situationWidgets = [];
+      final int count = crySituations.length > 3 ? 3 : crySituations.length;
+      for (int i = 0; i < count; i++) {
+        final situation = crySituations[i]['situation'];
+        final percentage = crySituations[i]['percentage'];
+        situationWidgets.add(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                situation,
+                style: TextStyle(
+                  fontSize: 18.0,
+                ),
+              ),
+              Text(
+                '${percentage.toString()}%',
+                style: TextStyle(
+                  fontSize: 18.0,
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(
+                      'Analysis Result',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5.0),
+                  Container(
+                    height: 1,
+                    width: double.infinity,
+                    color: Colors.black54,
+                  ),
+                  SizedBox(height: 10.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: situationWidgets,
+                  ),
+                  SizedBox(height: 10.0),
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }}
 
 class _CustomCurve extends Curve {
   const _CustomCurve();
