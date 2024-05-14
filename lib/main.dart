@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:proj_app/auth_page.dart';
 import 'package:proj_app/babyroutine/baby_routine.dart';
 import 'package:proj_app/pages/Allergy/allergies_screen.dart';
@@ -37,12 +38,19 @@ import 'package:proj_app/pages/Girls/entert.dart';
 import 'package:proj_app/pages/homescreenboy.dart';
 import 'package:proj_app/pages/Girls/homescreengirl.dart';
 import 'package:proj_app/pages/signuup.dart';
-
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  var initializationSettingsIOS = DarwinInitializationSettings();
+  var initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
   );
