@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,20 +26,14 @@ class _JumpState extends State<Jump> {
         extendBodyBehindAppBar: true,
         body: Container(
           decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('asset/images/image start.png'),
-              fit: BoxFit.cover,
-            ),
+            color: Colors.white,
           ),
           child: SizedBox(
-            width: 443,
+            width: 500,
             child: Column(
               children: [
                 const SizedBox(height: 100),
-                Expanded(
-                    child: SingleChildScrollView(
-                  child: _buildMotherMateStack(context),
-                ))
+                Expanded(child: _buildMotherMateStack(context))
               ],
             ),
           ),
@@ -50,62 +44,76 @@ class _JumpState extends State<Jump> {
 
   Widget _buildMotherMateStack(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 352),
-      padding: const EdgeInsets.symmetric(horizontal: 63),
+      // padding: const EdgeInsets.symmetric(horizontal: 75, vertical: 100),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Align(
+          SizedBox(
+            height: 70,
+          ),
+          Image(
+            image: AssetImage('asset/images/mother.png'),
+            height: 310,
+            width: 400,
             alignment: Alignment.center,
-            child: SizedBox(
-              height: 236,
-              width: 297,
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Text(
-                      "Mother Mate",
-                      style: GoogleFonts.lemonada(
-                        textStyle: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Image(
-                    image: AssetImage('asset/images/image 24.png'),
-                    height: 184,
-                    width: 260,
-                    alignment: Alignment.topCenter,
-                  ),
-                ],
-              ),
+          ),
+          const SizedBox(height: 30),
+          Text(
+            // "Mom's Best Assistant",
+            'Because every mom deserves a helping hand',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 22,
+              fontWeight: FontWeight.w500,
+              // color: Color(0xFF122646),
+              color: Colors.black,
             ),
           ),
-          const SizedBox(height: 46),
-          Container(
-            width: 220,
-            margin: const EdgeInsets.only(right: 39),
-            child: Text(
-              "Mom's \nBest Assistance",
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lemon(
-                // TextStyle(
-                //   fontSize: 20,
-                //   fontWeight: FontWeight.w200,
-                // ),
-                fontSize: 20,
-                fontWeight: FontWeight.w200,
-                color: Colors.white,
-              ),
-            ),
-          ),
+          // Align(
+          //   alignment: Alignment.center,
+          //   child: Container(
+          //     constraints: BoxConstraints(
+          //       maxWidth: 510, // Set the desired maximum width
+          //       maxHeight: 500,
+          //     ),
+          //     child: Stack(
+          //       alignment: Alignment.center,
+          //       children: [
+          //         // Image.asset(
+          //         //   'asset/images/mother.png',
+          //         //   scale: 0.1,
+          //         //   alignment: Alignment.center,
+          //         // ),
+          //         Image(
+          //           image: AssetImage('asset/images/mother.png'),
+          //           height: 310,
+          //           width: 400,
+          //           alignment: Alignment.center,
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 30),
+          // Container(
+          //   // width: 220,
+          //   // margin: const EdgeInsets.only(right: 39),
+          //   child: Text(
+          //     "Mom's Best Assistant",
+          //     // 'Because every mom deserves a helping hand',
+          //     // maxLines: 1,
+          //     // overflow: TextOverflow.ellipsis,
+          //     // textAlign: TextAlign.center,
+          //     style: GoogleFonts.poppins(
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.w500,
+          //       // color: Color(0xFF122646),
+          //       color: Colors.black,
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 53),
           // Center(
           //   child: ElevatedButton(
@@ -131,3 +139,30 @@ class _JumpState extends State<Jump> {
     );
   }
 }
+
+
+
+// height: 270,
+              // width: 297,
+// Align(
+                  //   alignment: Alignment.bottomCenter,
+                  //   child: Text(
+                  //     "Mother Mate",
+                  //     style: GoogleFonts.lemonada(
+                  //       textStyle: const TextStyle(
+                  //         fontSize: 30,
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Colors.white,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // const Image(
+                  //   image: AssetImage('asset/images/MotherMate 1.png',
+
+                  //   ),
+
+                  //   height: 270,
+                  //   width: 260,
+                  //   alignment: Alignment.center,
+                  // ),
