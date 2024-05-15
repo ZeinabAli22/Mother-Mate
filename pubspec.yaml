@@ -45,6 +45,10 @@ dependencies:
   cloud_firestore: ^4.15.5
   intl: ^0.18.0
   shared_preferences: ^2.0.8
+  image_picker: ^0.8.4+3
+  firebase_storage: ^11.6.9
+  timezone: ^0.9.3
+  permission_handler: ^10.0.0
 
   carousel_slider: ^4.2.1
   flutter_local_notifications: ^17.1.2

@@ -9,6 +9,7 @@ class AiEngineScreen extends StatefulWidget {
   @override
   State<AiEngineScreen> createState() => _AiEngineScreenState();
 }
+
 final Random _random = Random();
 
 int randomPercentage(int min, int max) {
@@ -20,7 +21,6 @@ class _AiEngineScreenState extends State<AiEngineScreen>
   late AnimationController _controller;
 
   Color color = AppColors.greenColor.withOpacity(0.4);
-
 
   final List<Map<String, dynamic>> crySituations = [
     {'situation': 'Hungry', 'percentage': randomPercentage(20, 60)},
@@ -117,7 +117,7 @@ class _AiEngineScreenState extends State<AiEngineScreen>
             ),
             ElevatedButton(
               onPressed: _analyzeCry,
-              child: Icon(Icons.mic ,color: Colors.black54,),
+              child: Icon(Icons.mic, color: Colors.black54,),
             ),
           ],
         ),
@@ -168,31 +168,48 @@ class _AiEngineScreenState extends State<AiEngineScreen>
 
       crySituations.shuffle();
 
-      List<Widget> situationWidgets = [];
-      final int count = crySituations.length > 3 ? 3 : crySituations.length;
-      for (int i = 0; i < count; i++) {
-        final situation = crySituations[i]['situation'];
-        final percentage = crySituations[i]['percentage'];
-        situationWidgets.add(
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                situation,
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
+      // Generate random percentages that sum to 100
+      final int percentage1 = randomPercentage(20, 60);
+      final int percentage2 = 100 - percentage1;
+
+      List<Map<String, dynamic>> results = [
+        {'situation': crySituations[0]['situation'], 'percentage': percentage1},
+        {'situation': crySituations[1]['situation'], 'percentage': percentage2},
+      ];
+
+      // Sort results to have the highest percentage at the top
+      results.sort((a, b) => b['percentage'].compareTo(a['percentage']));
+
+      List<Widget> situationWidgets = results.map((result) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              result['situation'],
+              style: TextStyle(
+                fontSize: 18.0,
               ),
-              Text(
-                '${percentage.toString()}%',
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
+            ),
+            Text(
+              '${result['percentage']}%',
+              style: TextStyle(
+                fontSize: 18.0,
               ),
-            ],
-          ),
+            ),
+          ],
         );
-      }
+      }).toList();
+
+      // Show notification
+      final highestResult = results[0];
+      final String notificationMessage = 'The baby may be ${highestResult['situation']} with a percentage of ${highestResult['percentage']}%.';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(notificationMessage),
+          duration: Duration(seconds: 3),
+        ),
+      );
 
       showDialog(
         context: context,
@@ -257,7 +274,8 @@ class _AiEngineScreenState extends State<AiEngineScreen>
         },
       );
     });
-  }}
+  }
+}
 
 class _CustomCurve extends Curve {
   const _CustomCurve();

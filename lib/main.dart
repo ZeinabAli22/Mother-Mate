@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:proj_app/auth_page.dart';
 import 'package:proj_app/babyroutine/baby_routine.dart';
 import 'package:proj_app/pages/Allergy/allergies_screen.dart';
@@ -33,28 +34,43 @@ import 'package:proj_app/pages/Instruction.dart';
 // import 'package:proj_app/pages/Jump.dart';
 import 'package:proj_app/pages/Sign.dart';
 // import 'package:proj_app/pages/Signup.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:proj_app/pages/choosegender.dart';
 import 'package:proj_app/pages/Girls/entert.dart';
 import 'package:proj_app/pages/homescreenboy.dart';
 import 'package:proj_app/pages/Girls/homescreengirl.dart';
 import 'package:proj_app/pages/signuup.dart';
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('America/Detroit'));
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-  var initializationSettingsIOS = DarwinInitializationSettings();
-  var initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-  flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: true,
-  );
+
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
+
+  await _requestPermissions();
+
   runApp(const MyApp());
+}
+Future<void> _requestPermissions() async {
+  if (await Permission.systemAlertWindow.request().isGranted) {
+    // Permission granted.
+  }
+
+  if (await Permission.scheduleExactAlarm.request().isGranted) {
+    // Permission granted.
+  }
 }
 // void main() {
 //   runApp(const MyApp());
