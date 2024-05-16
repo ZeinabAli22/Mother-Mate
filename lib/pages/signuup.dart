@@ -190,7 +190,10 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       TextButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          Navigator.of(context).pushNamed('signup');
+
+                        },
                         child: Text('Already have an account? Login' ,style: TextStyle(color: Colors.black54),),
                       ),
                     ],

@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class InstructionScreen extends StatefulWidget {
   const InstructionScreen({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class InstructionScreen extends StatefulWidget {
 
 class _InstructionScreenState extends State<InstructionScreen> {
   late String username = 'loading...';
+  late String profilePicUrl = 'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg';
 
   Future<void> getUserData() async {
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -23,10 +25,11 @@ class _InstructionScreenState extends State<InstructionScreen> {
       final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
       setState(() {
-        username = userData['username'];
+        username = userData['username'].split(' ')[0]; // Extract first name
+        profilePicUrl = userData['image_url'] ?? 'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg';
       });
-      print(' Email: ${userData['email']}');
-      print(' username: ${userData['username']}');
+      print('Email: ${userData['email']}');
+      print('Username: ${userData['username']}');
     } else {
       print('No user is currently signed in.');
     }
@@ -47,9 +50,9 @@ class _InstructionScreenState extends State<InstructionScreen> {
         elevation: 0.0,
         title: Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 25.0,
-              backgroundImage: NetworkImage('https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'),
+              backgroundImage: NetworkImage(profilePicUrl),
             ),
             const SizedBox(
               width: 10,
@@ -64,16 +67,6 @@ class _InstructionScreenState extends State<InstructionScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.notifications_rounded,
-              color: Colors.purple,
-              size: 30,
-            ),
-          ),
-        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('articles').snapshots(),
@@ -139,7 +132,7 @@ class InfoCard extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.network(
-                imageUrl ?? '',
+                imageUrl,
                 fit: BoxFit.cover,
               ),
             ),
@@ -151,7 +144,7 @@ class InfoCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  title ?? '',
+                  title,
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -163,7 +156,7 @@ class InfoCard extends StatelessWidget {
                 SizedBox(height: 8),
                 Expanded(
                   child: Text(
-                    description ?? '',
+                    description,
                     style: GoogleFonts.poppins(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -175,16 +168,16 @@ class InfoCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: () {
-                    try {
-                      if (articleUrl != null && articleUrl.isNotEmpty) {
-                        launch(articleUrl);
-                      } else {
-                        // Handle the case where articleUrl is null or empty
+                  onPressed: () async {
+                    if (articleUrl.isNotEmpty) {
+                      try {
+                        final Uri _url = Uri.parse(articleUrl);
+                        if (!await launchUrl(_url)) {
+                          print('Could not launch $articleUrl');
+                        }
+                      } catch (e) {
+                        print('Error launching URL: $e');
                       }
-                    } catch (e) {
-                      print('Error launching URL: $e');
-                      // Handle the error gracefully
                     }
                   },
                   style: ButtonStyle(
@@ -193,8 +186,6 @@ class InfoCard extends StatelessWidget {
                   ),
                   child: const Text('Read article'),
                 ),
-
-
               ],
             ),
           ),

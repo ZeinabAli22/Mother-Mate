@@ -20,19 +20,21 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
     Navigator.pushNamed(context, 'allergies_screen');
   }
 
-  late String Username = 'loading...';
+  late String username = 'loading...';
+  String profileImageUrl = '';
 
   Future<void> getUserData() async {
     if (uid != null) {
       final DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final Map<String, dynamic> userData =
-          userDoc.data() as Map<String, dynamic>;
+      userDoc.data() as Map<String, dynamic>;
       setState(() {
-        Username = userData['username'];
+        username = userData['username'].split(' ')[0]; // Get the first name only
+        profileImageUrl = userData['image_url'] ?? 'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg';
       });
-      print(' Email: ${userData['email']}');
-      print(' username: ${userData['username']}');
+      print('Email: ${userData['email']}');
+      print('Username: ${userData['username']}');
     } else {
       print('No user is currently signed in.');
     }
@@ -53,16 +55,15 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
         elevation: 0.0,
         title: Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 25.0,
-              backgroundImage: NetworkImage(
-                  'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'),
+              backgroundImage: NetworkImage(profileImageUrl),
             ),
             const SizedBox(
               width: 10,
             ),
             Text(
-              'Hi, $Username',
+              'Hi, $username',
               style: GoogleFonts.poppins(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -70,15 +71,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.notifications_rounded,
-                color: Colors.indigo,
-                size: 30,
-              )),
-        ],
+
       ),
       body: SingleChildScrollView(
         child: Padding(

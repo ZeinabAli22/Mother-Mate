@@ -1,10 +1,53 @@
-// ignore_for_file: prefer_const_constructors
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ProfileScreen extends StatelessWidget {
+import 'Sign.dart';
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late String firstName = 'loading...';
+  String profileImageUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  Future<void> getUserData() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final String? uid = user?.uid;
+
+    if (uid != null) {
+      final DocumentSnapshot userDoc =
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final Map<String, dynamic> userData =
+      userDoc.data() as Map<String, dynamic>;
+      setState(() {
+        firstName = userData['username'].split(' ')[0]; // Get the first name only
+        profileImageUrl = userData['image_url'] ?? 'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg';
+      });
+    } else {
+      print('No user is currently signed in.');
+    }
+  }
+
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => Signup(),
+      ),
+    );  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,31 +76,15 @@ class ProfileScreen extends StatelessWidget {
                     height: 120,
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: Image(
-                            image: NetworkImage(
-                                'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'))),
+                        child: Image.network(profileImageUrl, fit: BoxFit.cover)),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                        width: 35,
-                        height: 35,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: Colors.blue.withOpacity(0.1),
-                        ),
-                        child: Icon(
-                          Icons.camera_alt_rounded,
-                          size: 20,
-                        )),
-                  ),
+
                 ],
               ),
               SizedBox(
                 height: 10,
               ),
-              Text('Malek',
+              Text(firstName,
                   style: GoogleFonts.poppins(
                       fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(
@@ -71,7 +98,6 @@ class ProfileScreen extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      // side: BorderSide.none,
                       shape: StadiumBorder(
                         side: BorderSide(color: Colors.white),
                       )),
@@ -88,35 +114,6 @@ class ProfileScreen extends StatelessWidget {
                 height: 20,
               ),
               Divider(),
-              //Menu
-
-              MenuItem(
-                title: 'My Account',
-                textColor: Colors.black,
-                icon: Icons.person,
-                onpress: () {},
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              MenuItem(
-                title: 'Notifications',
-                textColor: Colors.black,
-                icon: Icons.notifications,
-                onpress: () {},
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              MenuItem(
-                title: 'Settings',
-                textColor: Colors.black,
-                icon: Icons.settings,
-                onpress: () {},
-              ),
-              SizedBox(
-                height: 10,
-              ),
               MenuItem(
                 title: 'Help',
                 textColor: Colors.black,
@@ -130,7 +127,9 @@ class ProfileScreen extends StatelessWidget {
                 title: 'Contact Us',
                 textColor: Colors.black,
                 icon: Icons.phone_rounded,
-                onpress: () {},
+                onpress: () {
+
+                },
               ),
               SizedBox(
                 height: 10,
@@ -139,7 +138,7 @@ class ProfileScreen extends StatelessWidget {
                 title: 'Logout',
                 textColor: Colors.redAccent.shade700,
                 icon: Icons.logout_rounded,
-                onpress: () {},
+                onpress: logout,
               ),
             ],
           ),

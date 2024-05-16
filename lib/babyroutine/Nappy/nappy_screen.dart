@@ -12,27 +12,41 @@ class Nappy extends StatefulWidget {
 
 class _NappyState extends State<Nappy> {
   final TextEditingController _commentController = TextEditingController();
-  final CollectionReference _nappyCollection =
-  FirebaseFirestore.instance.collection('nappies');
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> _addDiaperEntry() async {
     final User? user = _auth.currentUser;
     if (user != null) {
-      await _nappyCollection.add({
-        'userId': user.uid,
+      final CollectionReference userNappyCollection = FirebaseFirestore.instance
+          .collection('nappies')
+          .doc(user.uid)
+          .collection('user_nappies');
+
+      await userNappyCollection.add({
         'timestamp': DateTime.now(),
         'comment': _commentController.text.trim(),
       });
       _commentController.clear();
     }
   }
+
   Future<void> _deleteDiaperEntry(String documentId) async {
-    await _nappyCollection.doc(documentId).delete();
+    final User? user = _auth.currentUser;
+    if (user != null) {
+      final DocumentReference docRef = FirebaseFirestore.instance
+          .collection('nappies')
+          .doc(user.uid)
+          .collection('user_nappies')
+          .doc(documentId);
+
+      await docRef.delete();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final User? user = _auth.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
@@ -49,8 +63,24 @@ class _NappyState extends State<Nappy> {
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _nappyCollection.orderBy('timestamp').snapshots(),
+            child: user == null
+                ? Center(
+              child: Text(
+                'Please log in to see your entries',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                  fontSize: 20,
+                ),
+              ),
+            )
+                : StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('nappies')
+                  .doc(user.uid)
+                  .collection('user_nappies')
+                  .orderBy('timestamp')
+                  .snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return const Text('Something went wrong');
@@ -100,7 +130,6 @@ class _NappyState extends State<Nappy> {
                     );
                   }).toList(),
                 );
-
               },
             ),
           ),

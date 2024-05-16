@@ -11,7 +11,6 @@ class Posts extends StatefulWidget {
   State<Posts> createState() => _PostsState();
 }
 
-
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
 final String? uid = user?.uid;
@@ -19,17 +18,16 @@ final String? uid = user?.uid;
 class _PostsState extends State<Posts> {
   Future<List<DocumentSnapshot>> fetchPosts() async {
     QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('posts').get();
+    await FirebaseFirestore.instance.collection('posts').get();
     return querySnapshot.docs;
   }
 
   Future<void> deletePost(String postId) async {
     DocumentSnapshot postDoc =
-        await FirebaseFirestore.instance.collection('posts').doc(postId).get();
+    await FirebaseFirestore.instance.collection('posts').doc(postId).get();
 
     if (postDoc.exists) {
-      Map<String, dynamic>? postData = postDoc.data()
-          as Map<String, dynamic>?;
+      Map<String, dynamic>? postData = postDoc.data() as Map<String, dynamic>?;
       if (postData != null && postData['ownerUid'] == uid) {
         await FirebaseFirestore.instance
             .collection('posts')
@@ -47,8 +45,7 @@ class _PostsState extends State<Posts> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
         final snackBar = SnackBar(
-          content:
-              Text("Error: You do not have permission to delete this post"),
+          content: Text("Error: You do not have permission to delete this post"),
           duration: Duration(seconds: 2),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
@@ -66,14 +63,12 @@ class _PostsState extends State<Posts> {
 
   Future<void> addLike(String postId) async {
     DocumentSnapshot postSnapshot =
-        await FirebaseFirestore.instance.collection('posts').doc(postId).get();
+    await FirebaseFirestore.instance.collection('posts').doc(postId).get();
 
     if (postSnapshot.exists && postSnapshot.data() is Map<String, dynamic>) {
       Map<String, dynamic> data = postSnapshot.data() as Map<String, dynamic>;
-      List<dynamic> likes = data['likes'] ??
-          [];
-      isLiked = likes.contains(
-          uid);
+      List<dynamic> likes = data['likes'] ?? [];
+      isLiked = likes.contains(uid);
       if (isLiked) {
         await FirebaseFirestore.instance
             .collection('posts')
@@ -95,8 +90,7 @@ class _PostsState extends State<Posts> {
       }
     } else {
       final snackBar = SnackBar(
-        content:
-        Text("Error"),
+        content: Text("Error"),
         duration: Duration(seconds: 2),
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
@@ -153,10 +147,11 @@ class _PostsState extends State<Posts> {
           );
         }
         return Center(
-            child: Icon(
-          Icons.compost_sharp,
-          size: 50,
-        ));
+          child: Icon(
+            Icons.compost_sharp,
+            size: 50,
+          ),
+        );
       },
     );
   }
@@ -169,6 +164,14 @@ class _PostsState extends State<Posts> {
     bool likeicon = post['likesicon'];
     int likesCount = post['likesCount'];
     int commentsCount = post['commentsCount'];
+
+    String profileImageUrl;
+    try {
+      profileImageUrl = post['profileImageUrl']?? 'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg';
+    } catch (e) {
+      profileImageUrl = 'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg';
+    }
+
     TextEditingController commentController = TextEditingController();
 
     return Card(
@@ -182,10 +185,9 @@ class _PostsState extends State<Posts> {
           children: [
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage(
-                      'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg'),
+                  backgroundImage: NetworkImage(profileImageUrl),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
@@ -193,14 +195,14 @@ class _PostsState extends State<Posts> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${userName}',
+                        '$userName',
                         style: TextStyle(
                             height: 1.4,
                             fontWeight: FontWeight.w600,
                             fontSize: 16),
                       ),
                       Text(
-                        '${formattedTime}',
+                        '$formattedTime',
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall!
@@ -223,17 +225,17 @@ class _PostsState extends State<Posts> {
                             ]
                                 .map(
                                   (e) => InkWell(
-                                    onTap: () {
-                                      deletePost(postId);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 16),
-                                      child: Text(e),
-                                    ),
-                                  ),
-                                )
+                                onTap: () {
+                                  deletePost(postId);
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12, horizontal: 16),
+                                  child: Text(e),
+                                ),
+                              ),
+                            )
                                 .toList(),
                           ),
                         ),
@@ -252,7 +254,7 @@ class _PostsState extends State<Posts> {
               ),
             ),
             Text(
-              '${postContent}',
+              '$postContent',
               style: TextStyle(
                   fontSize: 14.0,
                   fontWeight: FontWeight.w600,
@@ -295,13 +297,14 @@ class _PostsState extends State<Posts> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5),
                       child: InkWell(
-                        onTap: (){Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => CommentsScreen(postId: postId),
-    ),
-    );
-    },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CommentsScreen(postId: postId),
+                            ),
+                          );
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -338,10 +341,9 @@ class _PostsState extends State<Posts> {
                 Expanded(
                   child: Row(
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 15,
-                        backgroundImage: NetworkImage(
-                            'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg'),
+                        backgroundImage: NetworkImage(profileImageUrl),
                       ),
                       const SizedBox(width: 15),
                       Expanded(
@@ -374,7 +376,6 @@ class _PostsState extends State<Posts> {
                               );
                               ScaffoldMessenger.of(context).showSnackBar(snackBar);
                             }
-
                           },
                           icon: Icon(
                             Icons.send,

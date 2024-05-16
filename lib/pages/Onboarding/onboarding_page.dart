@@ -65,7 +65,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           isLastPage
               ? GestureDetector(
                   onTap: () =>
-                      Navigator.pushReplacementNamed(context, 'signup'),
+                      Navigator.pushReplacementNamed(context, 'homescreenboy'),
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 16),
                     alignment: Alignment.center,

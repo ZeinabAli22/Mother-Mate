@@ -146,26 +146,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           duration: Duration(seconds: 5),
         ),
       );
-
-      /*
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Reminder Set'),
-            content: Text('You will be reminded about "${newItem.todo}" on $formattedDate at $formattedTime.'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-      */
     }
   }
 
@@ -259,11 +239,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Schedule Screen'),
+        title: Text('Schedule ToDos'), // Updated the title
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: ListView.builder(
+        child: todoList.isEmpty
+            ? Center(
+          child: Text(
+            'No ToDos available. Schedule one.',
+            style: TextStyle(fontSize: 18.0),
+          ),
+        )
+            : ListView.builder(
           itemCount: todoList.length,
           itemBuilder: (context, index) {
             TodoItem todoItem = todoList[index];

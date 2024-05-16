@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,30 +13,39 @@ class MedicalPerscription extends StatefulWidget {
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
 final String? uid = user?.uid;
+
 class _MedicalPerscriptionState extends State<MedicalPerscription> {
-  late String Username = 'loading...';
+
+  late String firstName = 'loading...';
+  String profileImageUrl = 'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'; // Default image URL
 
   Future<void> getUserData() async {
-
-
-    if (uid!= null) {
+    if (uid != null) {
       final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-      setState(() {
-        Username =userData['username'];
 
+      setState(() {
+        if (userData.containsKey('username') && userData['username'].isNotEmpty) {
+          firstName = userData['username'].split(' ')[0];
+        }
+        if (userData.containsKey('profileImageUrl') && userData['profileImageUrl'].isNotEmpty) {
+          profileImageUrl = userData['profileImageUrl'];
+        }
       });
-      print(' Email: ${userData['email']}');
-      print(' username: ${userData['username']}');
+
+      print('Email: ${userData['email']}');
+      print('First name: $firstName');
     } else {
       print('No user is currently signed in.');
     }
   }
+
   @override
   void initState() {
     super.initState();
     getUserData();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,53 +55,44 @@ class _MedicalPerscriptionState extends State<MedicalPerscription> {
         elevation: 0.0,
         title: Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 25.0,
-              backgroundImage: NetworkImage(
-                  'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'),
+              backgroundImage: NetworkImage(profileImageUrl),
             ),
             const SizedBox(
               width: 10,
             ),
             Text(
-              'Hi, $Username',
+              'Hi, $firstName',
               style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.indigo[500]),
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.indigo[500],
+              ),
             ),
           ],
         ),
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.notifications_rounded,
-                color: Colors.indigo,
-                size: 30,
-              )),
-        ],
+
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
             children: <Widget>[
-              Text("Mother Mate",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  )),
-              const SizedBox(
-                height: 20,
+              Text(
+                "Mother Mate",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
+              const SizedBox(height: 20),
               InkWell(
                 child: Container(
                   height: 90,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25),
@@ -116,33 +114,27 @@ class _MedicalPerscriptionState extends State<MedicalPerscription> {
                         ],
                       ),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    SizedBox(width: 10),
                     IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.open_in_new_rounded,
-                          color: Colors.indigo,
-                        )),
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.open_in_new_rounded,
+                        color: Colors.indigo,
+                      ),
+                    ),
                   ]),
                 ),
                 onTap: () {
                   Navigator.pushNamed(context, 'doctor_screen');
                 },
               ),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               AdsDoctor(),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               InkWell(
                 child: Container(
                   height: 90,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25),
@@ -164,20 +156,20 @@ class _MedicalPerscriptionState extends State<MedicalPerscription> {
                         ],
                       ),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    SizedBox(width: 10),
                     Container(
                       decoration: BoxDecoration(
-                          color: Colors.indigo,
-                          borderRadius: BorderRadius.circular(35)),
+                        color: Colors.indigo,
+                        borderRadius: BorderRadius.circular(35),
+                      ),
                       child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.qr_code_scanner_rounded,
-                            color: Colors.white,
-                            size: 30,
-                          )),
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.qr_code_scanner_rounded,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
                     ),
                   ]),
                 ),
@@ -185,14 +177,11 @@ class _MedicalPerscriptionState extends State<MedicalPerscription> {
                   Navigator.pushNamed(context, 'doctor_screen');
                 },
               ),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
               InkWell(
                 child: Container(
                   height: 90,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25),
@@ -214,20 +203,20 @@ class _MedicalPerscriptionState extends State<MedicalPerscription> {
                         ],
                       ),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    SizedBox(width: 10),
                     Container(
                       decoration: BoxDecoration(
-                          color: Colors.indigo,
-                          borderRadius: BorderRadius.circular(35)),
+                        color: Colors.indigo,
+                        borderRadius: BorderRadius.circular(35),
+                      ),
                       child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.upload_file_rounded,
-                            color: Colors.white,
-                            size: 30,
-                          )),
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.upload_file_rounded,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
                     ),
                   ]),
                 ),
