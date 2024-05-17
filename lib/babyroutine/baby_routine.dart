@@ -34,7 +34,7 @@ class _BabyRoutineScreenState extends State<BabyRoutineScreen> {
       body: Stack(
         children: [
           Container(
-            height: size.height * .45,
+            height: size.height * .25,
             decoration: BoxDecoration(
               color: Colors.blue[300],
             ),
@@ -46,9 +46,9 @@ class _BabyRoutineScreenState extends State<BabyRoutineScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   //header
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  // const SizedBox(
+                  //   height: 15,
+                  // ),
                   Text("Mother Mate",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
@@ -57,9 +57,9 @@ class _BabyRoutineScreenState extends State<BabyRoutineScreen> {
                         color: Colors.white,
                       )),
                   //search barrr
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  // const SizedBox(
+                  //   height: 10,
+                  // ),
                   Row(
                     children: [
                       Text(
@@ -77,8 +77,8 @@ class _BabyRoutineScreenState extends State<BabyRoutineScreen> {
                   GridView.count(
                     crossAxisCount: 2,
                     childAspectRatio: 1.0,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
+                    crossAxisSpacing: 40,
+                    mainAxisSpacing: 40,
                     shrinkWrap: true,
                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -136,8 +136,8 @@ class _BabyRoutineScreenState extends State<BabyRoutineScreen> {
                     // crossAxisCount is the number of columns
                     crossAxisCount: 2,
                     childAspectRatio: 1.0,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
+                    crossAxisSpacing: 40,
+                    mainAxisSpacing: 40,
                     shrinkWrap: true,
                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -202,27 +202,27 @@ class _BabyRoutineScreenState extends State<BabyRoutineScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: CurvedNavigationBar(
-          backgroundColor: Colors.blueAccent,
-          animationDuration: const Duration(milliseconds: 300),
-          onTap: (index) {
-            // print(index);
-          },
-          buttonBackgroundColor: Colors.white,
-          items: const [
-            CurvedNavigationBarItem(
-              child: Icon(Icons.home_rounded),
-              label: 'Home',
-            ),
-            CurvedNavigationBarItem(
-              child: Icon(Icons.play_circle),
-              label: 'Play',
-            ),
-            CurvedNavigationBarItem(
-              child: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ]),
+      // bottomNavigationBar: CurvedNavigationBar(
+      //     backgroundColor: Colors.blueAccent,
+      //     animationDuration: const Duration(milliseconds: 300),
+      //     onTap: (index) {
+      //       // print(index);
+      //     },
+      //     buttonBackgroundColor: Colors.white,
+      //     items: const [
+      //       CurvedNavigationBarItem(
+      //         child: Icon(Icons.home_rounded),
+      //         label: 'Home',
+      //       ),
+      //       CurvedNavigationBarItem(
+      //         child: Icon(Icons.play_circle),
+      //         label: 'Play',
+      //       ),
+      //       CurvedNavigationBarItem(
+      //         child: Icon(Icons.person),
+      //         label: 'Profile',
+      //       ),
+      //     ]),
     );
   }
 

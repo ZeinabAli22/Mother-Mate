@@ -5,9 +5,9 @@ List<String> images = [
   "asset/images/Rabbit.jpg",
 ];
 
-List<String> title = [
-  "The Magical Dandelion",
-  "The Three Pigs",
-  "The Little Mermaid",
-  "The Rabbit &Turtail",
-];
+// List<String> title = [
+//   "The Magical Dandelion",
+//   "The Three Pigs",
+//   "The Little Mermaid",
+//   "The Rabbit &Turtail",
+// ];

@@ -1,5 +1,7 @@
-import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
-import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
+// ignore_for_file: prefer_const_constructors
+
+// import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
+// import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/link.dart';
@@ -57,41 +59,49 @@ class _VideosScreenState extends State<VideosScreen> {
                   controller: _controller,
                   children: [
                     Link(
-                      uri: Uri.parse('https://www.youtube.com/watch?v=YRpvIiz9G8A'),
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=YRpvIiz9G8A'),
                       builder: (context, followlink) => InkWell(
                         onTap: followlink,
                         child: MyCards(
-                          imagepath: 'https://i.pinimg.com/564x/26/ed/bd/26edbd566a6fa21365bd4b2d57b26873.jpg',
+                          imagepath:
+                              'https://i.pinimg.com/564x/26/ed/bd/26edbd566a6fa21365bd4b2d57b26873.jpg',
                           title: 'Enacanto',
                         ),
                       ),
                     ),
                     Link(
-                      uri: Uri.parse('https://www.youtube.com/watch?v=u5INFsIYeZw'),
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=u5INFsIYeZw'),
                       builder: (context, followlink) => InkWell(
                         onTap: followlink,
                         child: MyCards(
-                          imagepath: 'https://i.pinimg.com/564x/cf/c2/12/cfc212c43fa6e36c8819c619b8711a83.jpg',
+                          imagepath:
+                              'https://i.pinimg.com/564x/cf/c2/12/cfc212c43fa6e36c8819c619b8711a83.jpg',
                           title: '',
                         ),
                       ),
                     ),
                     Link(
-                      uri: Uri.parse('https://www.youtube.com/watch?v=XqZsoesa55w'),
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=XqZsoesa55w'),
                       builder: (context, followLink) => InkWell(
                         onTap: followLink,
                         child: MyCards(
-                          imagepath: 'https://i.pinimg.com/736x/dc/34/a5/dc34a5be843232d2983bd5cd4f7e8835.jpg',
+                          imagepath:
+                              'https://i.pinimg.com/736x/dc/34/a5/dc34a5be843232d2983bd5cd4f7e8835.jpg',
                           title: 'Baby Shark',
                         ),
                       ),
                     ),
                     Link(
-                      uri: Uri.parse('https://www.youtube.com/watch?v=n3ZWcbGdyJw'),
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=n3ZWcbGdyJw'),
                       builder: (context, followLink) => InkWell(
                         onTap: followLink,
                         child: MyCards(
-                          imagepath: 'https://i.pinimg.com/564x/e3/36/73/e336736d958a445105bd0376ef9f71bd.jpg',
+                          imagepath:
+                              'https://i.pinimg.com/564x/e3/36/73/e336736d958a445105bd0376ef9f71bd.jpg',
                           title: 'الارنب و الثعلب',
                         ),
                       ),
@@ -114,55 +124,65 @@ class _VideosScreenState extends State<VideosScreen> {
                 child: Column(
                   children: [
                     Link(
-                      uri: Uri.parse('https://www.youtube.com/watch?v=yCjJyiqpAuU'),
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=yCjJyiqpAuU'),
                       builder: (context, followLink) => GestureDetector(
                         onTap: followLink,
                         child: VideosCard(
-                          imagePath: 'https://i.pinimg.com/564x/27/cf/42/27cf4293377b2d028c25a937df33bfb2.jpg',
+                          imagePath:
+                              'https://i.pinimg.com/564x/27/cf/42/27cf4293377b2d028c25a937df33bfb2.jpg',
                           title: 'Twinkle Twinkle',
                           subtitle: '2:33 Min',
                         ),
                       ),
                     ),
                     Link(
-                      uri: Uri.parse('https://www.youtube.com/watch?v=TeQ_TTyLGMs'),
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=TeQ_TTyLGMs'),
                       builder: (context, followLink) => GestureDetector(
                         onTap: followLink,
                         child: VideosCard(
-                          imagePath: 'https://i.pinimg.com/564x/56/c8/27/56c827cc1a6d9fb7717deaa348981430.jpg',
+                          imagePath:
+                              'https://i.pinimg.com/564x/56/c8/27/56c827cc1a6d9fb7717deaa348981430.jpg',
                           title: 'Frozen',
                           subtitle: '3:21 Min',
                         ),
                       ),
                     ),
                     Link(
-                      uri: Uri.parse('https://www.youtube.com/watch?v=ukcd0dsvSxY'),
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=ukcd0dsvSxY'),
                       builder: (context, followLink) => GestureDetector(
                         onTap: followLink,
                         child: VideosCard(
-                          imagePath: 'https://i.pinimg.com/564x/b1/b4/7c/b1b47cac46cae6ad696ef972f43893a6.jpg',
+                          imagePath:
+                              'https://i.pinimg.com/564x/b1/b4/7c/b1b47cac46cae6ad696ef972f43893a6.jpg',
                           title: 'جدو علي',
                           subtitle: '3:27 Min',
                         ),
                       ),
                     ),
                     Link(
-                      uri: Uri.parse('https://www.youtube.com/watch?v=l_DQpS9lBhE'),
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=l_DQpS9lBhE'),
                       builder: (context, followLink) => GestureDetector(
                         onTap: followLink,
                         child: VideosCard(
-                          imagePath: 'https://i.pinimg.com/564x/f8/1b/98/f81b9815aac241e259340121cdfea11b.jpg',
+                          imagePath:
+                              'https://i.pinimg.com/564x/f8/1b/98/f81b9815aac241e259340121cdfea11b.jpg',
                           title: 'Baby\'s First Step',
                           subtitle: '14:18 Min',
                         ),
                       ),
                     ),
                     Link(
-                      uri: Uri.parse('https://www.youtube.com/watch?v=pZw9veQ76fo'),
+                      uri: Uri.parse(
+                          'https://www.youtube.com/watch?v=pZw9veQ76fo'),
                       builder: (context, followLink) => GestureDetector(
                         onTap: followLink,
                         child: VideosCard(
-                          imagePath: 'https://i.pinimg.com/564x/b8/55/a2/b855a2885d32a96baf9ebf14bfa2ac3c.jpg',
+                          imagePath:
+                              'https://i.pinimg.com/564x/b8/55/a2/b855a2885d32a96baf9ebf14bfa2ac3c.jpg',
                           title: 'Five Little Ducks',
                           subtitle: '2:54 Min',
                         ),
@@ -174,28 +194,6 @@ class _VideosScreenState extends State<VideosScreen> {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.blueAccent,
-        animationDuration: const Duration(milliseconds: 300),
-        onTap: (index) {
-          // Handle navigation
-        },
-        buttonBackgroundColor: Colors.white,
-        items: const [
-          CurvedNavigationBarItem(
-            child: Icon(Icons.home_rounded),
-            label: 'Home',
-          ),
-          CurvedNavigationBarItem(
-            child: Icon(Icons.play_circle),
-            label: 'Play',
-          ),
-          CurvedNavigationBarItem(
-            child: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
       ),
     );
   }

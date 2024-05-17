@@ -46,7 +46,8 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  final CollectionReference todoCollection = FirebaseFirestore.instance.collection('todos');
+  final CollectionReference todoCollection =
+      FirebaseFirestore.instance.collection('todos');
   final TextEditingController todoController = TextEditingController();
 
   DateTime selectedDate = DateTime.now();
@@ -133,7 +134,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         itemNumber: nextItemNumber,
       );
 
-      await todoCollection.doc(user.uid).collection('user_todos').add(newItem.toJson());
+      await todoCollection
+          .doc(user.uid)
+          .collection('user_todos')
+          .add(newItem.toJson());
 
       _scheduleNotification(newItem);
 
@@ -142,7 +146,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Schedule and ToDo Saved. You will be reminded on $formattedDate at $formattedTime.'),
+          content: Text(
+              'Schedule and ToDo Saved. You will be reminded on $formattedDate at $formattedTime.'),
           duration: Duration(seconds: 5),
         ),
       );
@@ -164,7 +169,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       ticker: 'ticker',
     );
 
-    var platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       todoItem.itemNumber,
@@ -173,21 +179,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       scheduledNotificationDateTime,
       platformChannelSpecifics,
       androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
   Future<int> _getTodoCount(String userId) async {
-    QuerySnapshot querySnapshot = await todoCollection.doc(userId).collection('user_todos').get();
+    QuerySnapshot querySnapshot =
+        await todoCollection.doc(userId).collection('user_todos').get();
     return querySnapshot.size;
   }
 
   Future<void> _loadData() async {
     final User? user = _auth.currentUser;
     if (user != null) {
-      todoCollection.doc(user.uid).collection('user_todos').snapshots().listen((snapshot) {
+      todoCollection
+          .doc(user.uid)
+          .collection('user_todos')
+          .snapshots()
+          .listen((snapshot) {
         setState(() {
-          todoList = snapshot.docs.map((doc) => TodoItem.fromJson(doc.data() as Map<String, dynamic>)).toList();
+          todoList = snapshot.docs
+              .map((doc) =>
+                  TodoItem.fromJson(doc.data() as Map<String, dynamic>))
+              .toList();
         });
       });
     }
@@ -198,11 +213,19 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Future<void> _updateTodoCompletion(TodoItem todoItem) async {
     final User? user = _auth.currentUser;
     if (user != null) {
-      final docSnapshot = await todoCollection.doc(user.uid).collection('user_todos').where('itemNumber', isEqualTo: todoItem.itemNumber).get();
+      final docSnapshot = await todoCollection
+          .doc(user.uid)
+          .collection('user_todos')
+          .where('itemNumber', isEqualTo: todoItem.itemNumber)
+          .get();
 
       if (docSnapshot.docs.isNotEmpty) {
         final docId = docSnapshot.docs.first.id;
-        await todoCollection.doc(user.uid).collection('user_todos').doc(docId).update({'isCompleted': todoItem.isCompleted});
+        await todoCollection
+            .doc(user.uid)
+            .collection('user_todos')
+            .doc(docId)
+            .update({'isCompleted': todoItem.isCompleted});
 
         print('the todo complete $todoItem   ${todoItem.isCompleted}');
       } else {
@@ -214,11 +237,19 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Future<void> _deleteTodoItem(TodoItem todoItem) async {
     final User? user = _auth.currentUser;
     if (user != null) {
-      final docSnapshot = await todoCollection.doc(user.uid).collection('user_todos').where('itemNumber', isEqualTo: todoItem.itemNumber).get();
+      final docSnapshot = await todoCollection
+          .doc(user.uid)
+          .collection('user_todos')
+          .where('itemNumber', isEqualTo: todoItem.itemNumber)
+          .get();
 
       if (docSnapshot.docs.isNotEmpty) {
         final docId = docSnapshot.docs.first.id;
-        await todoCollection.doc(user.uid).collection('user_todos').doc(docId).delete();
+        await todoCollection
+            .doc(user.uid)
+            .collection('user_todos')
+            .doc(docId)
+            .delete();
 
         setState(() {
           todoList.remove(todoItem);
@@ -239,52 +270,54 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Schedule ToDos'), // Updated the title
+        title: Text('Schedule To Do'), // Updated the title
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: todoList.isEmpty
             ? Center(
-          child: Text(
-            'No ToDos available. Schedule one.',
-            style: TextStyle(fontSize: 18.0),
-          ),
-        )
+                child: Text(
+                  'No Schedule available. Add one.',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              )
             : ListView.builder(
-          itemCount: todoList.length,
-          itemBuilder: (context, index) {
-            TodoItem todoItem = todoList[index];
-            return Card(
-              elevation: 3,
-              child: ListTile(
-                leading: Checkbox(
-                  value: todoItem.isCompleted,
-                  onChanged: (bool? value) async {
-                    setState(() {
-                      todoItem.isCompleted = value ?? false;
-                    });
-                    await _updateTodoCompletion(todoItem);
-                  },
-                ),
-                title: Text(
-                  todoItem.todo,
-                  style: TextStyle(
-                    decoration: todoItem.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
-                  ),
-                ),
-                subtitle: Text(
-                  'Date & Time: ${todoItem.dateTime.year}-${todoItem.dateTime.month}-${todoItem.dateTime.day} ${todoItem.dateTime.hour}:${todoItem.dateTime.minute}',
-                ),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () async {
-                    await _deleteTodoItem(todoItem);
-                  },
-                ),
+                itemCount: todoList.length,
+                itemBuilder: (context, index) {
+                  TodoItem todoItem = todoList[index];
+                  return Card(
+                    elevation: 3,
+                    child: ListTile(
+                      leading: Checkbox(
+                        value: todoItem.isCompleted,
+                        onChanged: (bool? value) async {
+                          setState(() {
+                            todoItem.isCompleted = value ?? false;
+                          });
+                          await _updateTodoCompletion(todoItem);
+                        },
+                      ),
+                      title: Text(
+                        todoItem.todo,
+                        style: TextStyle(
+                          decoration: todoItem.isCompleted
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Date & Time: ${todoItem.dateTime.year}-${todoItem.dateTime.month}-${todoItem.dateTime.day} ${todoItem.dateTime.hour}:${todoItem.dateTime.minute}',
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () async {
+                          await _deleteTodoItem(todoItem);
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _selectDateTime(context),

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -20,6 +22,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     PageController controller = PageController(initialPage: images.length - 1);
     controller.addListener(() {
       setState(() {
@@ -27,23 +30,24 @@ class _StoriesScreenState extends State<StoriesScreen> {
       });
     });
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF1b1e44), Color(0xFF2d3447)],
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-        ),
+      decoration: BoxDecoration(
+        // gradient: LinearGradient(
+        //   colors: [Color(0xFF1b1e44), Color(0xFF2d3447)],
+        //   begin: Alignment.bottomCenter,
+        //   end: Alignment.topCenter,
+        // ),
+        color: Colors.grey[200],
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          iconTheme: const IconThemeData(color: Colors.white, size: 30),
-          backgroundColor: Colors.transparent,
+          iconTheme: const IconThemeData(color: Colors.black, size: 30),
+          backgroundColor: Colors.grey[200],
           elevation: 0.0,
           title: Text(
             'Stories',
-            style: GoogleFonts.poppins(
-                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
+            style:
+                GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 25),
           ),
         ),
         body: SingleChildScrollView(
@@ -57,7 +61,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                     const Text(
                       'Trending',
                       style: TextStyle(
-                          color: Colors.white,
+                          // color: Colors.white,
                           fontSize: 46,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0),
@@ -67,7 +71,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                         icon: const Icon(
                           Icons.more_vert,
                           size: 25,
-                          color: Colors.white,
+                          // color: Colors.white,
                         )),
                   ],
                 ),
@@ -89,7 +93,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                           ),
                           child: Text(
                             'Animated',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.black),
                           ),
                         ),
                       ),
@@ -127,7 +131,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                     const Text(
                       'Favourite',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 46.0,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0),
@@ -137,7 +141,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                         icon: const Icon(
                           Icons.more_vert,
                           size: 25,
-                          color: Colors.white,
+                          // color: Colors.white,
                         )),
                   ],
                 ),
@@ -171,7 +175,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
               const SizedBox(height: 20.0),
               // ListView
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                padding: EdgeInsets.all(screenWidth * 0.05),
                 child: Column(
                   children: <Widget>[
                     Link(
@@ -179,10 +183,10 @@ class _StoriesScreenState extends State<StoriesScreen> {
                           'https://www.bing.com/videos/riverview/relatedvideo?q=magic+pot+story&mid=F2B6C3F8CD82D3E6DE35F2B6C3F8CD82D3E6DE35&FORM=VIRE'),
                       builder: (context, followLink) => GestureDetector(
                         onTap: followLink,
-                        child: StoryCard(
+                        child: VideosCard(
                           imagePath: 'asset/images/Magic Pot.jpeg',
                           title: 'Magic Pot Bedtime',
-                          info: '5:32 Min',
+                          subtitle: '5:32 Min',
                         ),
                       ),
                     ),
@@ -192,23 +196,23 @@ class _StoriesScreenState extends State<StoriesScreen> {
                           'https://www.youtube.com/watch?v=ADi7F695d90'),
                       builder: (context, followLink) => GestureDetector(
                         onTap: followLink,
-                        child: StoryCard(
+                        child: VideosCard(
                           imagePath: 'asset/images/Rabbit.jpg',
                           title: 'Rabbit',
-                          info: '5:32 Min',
+                          subtitle: '5:32 Min',
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    // const SizedBox(height: 10),
                     Link(
                       uri: Uri.parse(
                           'https://www.youtube.com/watch?v=pf_xz7GFCHw'),
                       builder: (context, followLink) => GestureDetector(
                         onTap: followLink,
-                        child: StoryCard(
+                        child: VideosCard(
                           imagePath: 'asset/images/Little.jpg',
                           title: 'The Little Maremaid',
-                          info: '5:30 Min',
+                          subtitle: '5:30 Min',
                         ),
                       ),
                     ),
@@ -267,7 +271,7 @@ class CardScrollWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
               child: Container(
                 decoration:
-                const BoxDecoration(color: Colors.white, boxShadow: [
+                    BoxDecoration(color: Colors.grey.shade200, boxShadow: [
                   BoxShadow(
                     color: Colors.black12,
                     offset: Offset(3.0, 6.0),
@@ -283,46 +287,46 @@ class CardScrollWidget extends StatelessWidget {
                         images[i],
                         fit: BoxFit.cover,
                       ),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 8.0),
-                              child: Text(
-                                title[i],
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 30.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 12.0, bottom: 12.0),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 22.0, vertical: 6.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.blueAccent,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Text(
-                                  'Read Later',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                      // Align(
+                      //   alignment: Alignment.bottomLeft,
+                      //   child: Column(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Padding(
+                      //         padding: const EdgeInsets.symmetric(
+                      //             horizontal: 16.0, vertical: 8.0),
+                      //         child: Text(
+                      //           title[i],
+                      //           style: const TextStyle(
+                      //             color: Colors.white,
+                      //             fontSize: 30.0,
+                      //             fontWeight: FontWeight.bold,
+                      //           ),
+                      //         ),
+                      //       ),
+                      //       const SizedBox(
+                      //         height: 10.0,
+                      //       ),
+                      //       // Padding(
+                      //       //   padding: const EdgeInsets.only(
+                      //       //       left: 12.0, bottom: 12.0),
+                      //       //   child: Container(
+                      //       //     padding: const EdgeInsets.symmetric(
+                      //       //         horizontal: 22.0, vertical: 6.0),
+                      //       //     decoration: BoxDecoration(
+                      //       //       color: Colors.blueAccent,
+                      //       //       borderRadius: BorderRadius.circular(20),
+                      //       //     ),
+                      //       //     child: const Text(
+                      //       //       'Read Later',
+                      //       //       style: TextStyle(color: Colors.white),
+                      //       //     ),
+                      //       //   ),
+                      //       // ),
+                      //     ],
+                      //   ),
+                      // )
                     ],
                   ),
                 ),
@@ -354,8 +358,8 @@ class StoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF1b1e44),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
       ),
       child: Row(
         children: [
@@ -393,3 +397,75 @@ class StoryCard extends StatelessWidget {
   }
 }
 
+class VideosCard extends StatelessWidget {
+  final String imagePath;
+  final String title;
+  final String subtitle;
+
+  const VideosCard({
+    super.key,
+    required this.imagePath,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              bottomLeft: Radius.circular(20),
+            ),
+            child: Image.asset(
+              imagePath,
+              // height: screenWidth * 0.3,
+              // width: screenWidth * 0.3,
+              scale: 6,
+              fit: BoxFit.cover,
+            ),
+          ),
+          SizedBox(width: screenWidth * 0.05),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.bold,
+                  fontSize: screenWidth * 0.05,
+                  color: Colors.black,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w300,
+                  fontSize: screenWidth * 0.04,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class UpcomingCard extends StatelessWidget {
@@ -11,7 +13,8 @@ class UpcomingCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 170, // Consider making this dynamic based on screen size
-      padding: EdgeInsets.symmetric(vertical: 22, horizontal: 20), // Adjust padding based on screen size
+      padding: EdgeInsets.symmetric(
+          vertical: 22, horizontal: 20), // Adjust padding based on screen size
       decoration: BoxDecoration(
         color: Colors.indigo[300],
         borderRadius: BorderRadius.circular(20),
@@ -19,7 +22,6 @@ class UpcomingCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
-
         children: [
           LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
@@ -28,9 +30,13 @@ class UpcomingCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('asset/images/Doctors.png', width: screenWidth * 0.2,fit: BoxFit.cover), // Adjust image size based on screen width
+                  Image.asset('asset/images/Doctors.png',
+                      width: screenWidth * 0.2,
+                      fit: BoxFit
+                          .cover), // Adjust image size based on screen width
                   SizedBox(width: 7),
-                  Expanded( // Use Expanded to fill available space
+                  Expanded(
+                    // Use Expanded to fill available space
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -40,7 +46,9 @@ class UpcomingCard extends StatelessWidget {
                           child: Text(
                             'Dr.John Magdy',
                             style: TextStyle(
-                              fontSize: screenWidth > 600? 18 : 16, // Adjust font size based on screen width
+                              fontSize: screenWidth > 600
+                                  ? 18
+                                  : 16, // Adjust font size based on screen width
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
@@ -50,7 +58,6 @@ class UpcomingCard extends StatelessWidget {
                           'Paediatrician Specialist',
                           style: TextStyle(color: Colors.white),
                         ),
-
                       ],
                     ),
                   ),
@@ -58,7 +65,9 @@ class UpcomingCard extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           Center(
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 6, horizontal: 2),
