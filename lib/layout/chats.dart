@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'chat_screen.dart';
 
 class ChatsScreen extends StatefulWidget {
@@ -14,8 +13,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
   List<Map<String, dynamic>> items = [
     {
       'name': 'Mamy Malak',
-      'imageUrl':
-          'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg',
+      'imageUrl': 'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg',
     },
     // Add more items here
   ];
@@ -41,71 +39,64 @@ class _ChatsScreenState extends State<ChatsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 10,
-          ),
-    StreamBuilder(
-    stream: FirebaseFirestore.instance.collection('Groups').snapshots(),
-    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-    if (!snapshot.hasData) {
-    return CircularProgressIndicator();
-    }
-    return
-          Container(
-            height: 120,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                final groupDocument = snapshot.data!.docs[index];
-
-                return Padding(
-                  padding: const EdgeInsets.only(right: 17.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GroupChatScreen(
-                            groupId: groupDocument.id,
-                            groupTitle: groupDocument['title'],
-                          ),
-                        ),
-                      );
-                    },
-
-                    child: Container(
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundImage: NetworkImage(groupDocument['imageURL']),
-
-                          ),
-                          SizedBox(height: 7),
-                          Text(
-                            groupDocument['title'], // Replace with dynamic data
-                            style: TextStyle(color: Colors.black, fontSize: 18),
-                            maxLines: 2,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ));
-            },
-
-    ),
-          SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           StreamBuilder(
             stream: FirebaseFirestore.instance.collection('Groups').snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (!snapshot.hasData) {
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
+              }
+              return Container(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    final groupDocument = snapshot.data!.docs[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 17.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GroupChatScreen(
+                                groupId: groupDocument.id,
+                                groupTitle: groupDocument['title'] ?? 'No Title',
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          child: Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundImage: NetworkImage(groupDocument['imageURL'] ?? 'https://via.placeholder.com/150'),
+                              ),
+                              SizedBox(height: 7),
+                              Text(
+                                groupDocument['title'] ?? 'No Title',
+                                style: TextStyle(color: Colors.black, fontSize: 18),
+                                maxLines: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          SizedBox(height: 10),
+          StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('Groups').snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
               }
               return Expanded(
                 child: ListView.builder(
@@ -122,7 +113,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                             MaterialPageRoute(
                               builder: (context) => GroupChatScreen(
                                 groupId: groupDocument.id,
-                                groupTitle: groupDocument['title'],
+                                groupTitle: groupDocument['title'] ?? 'No Title',
                               ),
                             ),
                           );
@@ -132,7 +123,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                           children: [
                             CircleAvatar(
                               radius: 30,
-                              backgroundImage: NetworkImage(groupDocument['imageURL']),
+                              backgroundImage: NetworkImage(groupDocument['imageURL'] ?? 'https://via.placeholder.com/150'),
                             ),
                             SizedBox(width: 20),
                             Expanded(
@@ -140,7 +131,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    groupDocument['title'],
+                                    groupDocument['title'] ?? 'No Title',
                                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                                   ),
                                   SizedBox(height: 3),
@@ -155,6 +146,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                     builder: (context, snapshot) {
                                       if (!snapshot.hasData) {
                                         return Text('Loading...'); // Placeholder while loading
+                                      }
+                                      if (snapshot.data!.docs.isEmpty) {
+                                        return Text('No messages yet'); // Placeholder for no messages
                                       }
                                       final lastMessageDoc = snapshot.data!.docs.first;
                                       final lastMessageContent = lastMessageDoc['content'];

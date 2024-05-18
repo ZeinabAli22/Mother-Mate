@@ -35,7 +35,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   .collection('Groups')
                   .doc(widget.groupId)
                   .collection('messages')
-                  .orderBy('timestampofmessage', ) // Order by ascending to show the newest messages at the bottom
+                  .orderBy('timestampofmessage') // Order by ascending to show the newest messages at the bottom
                   .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) {
@@ -128,26 +128,36 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     String formattedTime = DateFormat('h:mm a').format(dateTime);
 
     if (messageContent.isNotEmpty) {
-      // Get the user's profile picture URL
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      String userProfilePic = userDoc['image_url'] ?? 'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg';
+      try {
+        // Get the user's profile picture URL
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        String userProfilePic = userData.containsKey('image_url') ? userData['image_url'] : 'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg';
 
-      FirebaseFirestore.instance.collection('Groups').doc(widget.groupId).collection('messages').add({
-        'senderUid': uid,
-        'timestamp': formattedTime,
-        'timestampofmessage': dateTime,
-        'content': messageContent,
-        'profilePic': userProfilePic,
-      });
+        await FirebaseFirestore.instance.collection('Groups').doc(widget.groupId).collection('messages').add({
+          'senderUid': uid,
+          'timestamp': formattedTime,
+          'timestampofmessage': dateTime,
+          'content': messageContent,
+          'profilePic': userProfilePic,
+        });
 
-      _messageController.clear();
+        _messageController.clear();
 
-      // Scroll to the bottom after sending a message
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-        }
-      });
+        // Scroll to the bottom after sending a message
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+          }
+        });
+      } catch (e) {
+        print('Error sending message: $e');
+        final snackBar = SnackBar(
+          content: Text('Failed to send message.'),
+          backgroundColor: Colors.red,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     } else {
       final snackBar = SnackBar(
         content: Text('The message is empty.'),
