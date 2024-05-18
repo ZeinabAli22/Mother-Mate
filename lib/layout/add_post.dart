@@ -12,10 +12,39 @@ class AddPostScreen extends StatefulWidget {
 final postController = TextEditingController();
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
-late String username = 'user';
-late String profileImageUrl = 'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg';
-
 class _AddPostScreenState extends State<AddPostScreen> {
+
+  late String username = 'User';
+  late String profileImageUrl =
+      'https://i.pinimg.com/564x/15/12/11/1512110aa5ba75d49f9df7911b119bf2.jpg';
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  Future<void> getUserData() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String? uid = user?.uid;
+
+    if (uid != null) {
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+
+      if (userData != null) {
+        setState(() {
+          profileImageUrl = userData['image_url'] ?? 'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg';
+          username = userData['username'] ?? 'loading...';
+        });
+      } else {
+        print('No data found for the user.');
+      }
+    } else {
+      print('No user is currently signed in.');
+    }
+  }
+
 
   Future<void> createPost(BuildContext context) async {
     if (user != null) {
@@ -34,7 +63,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         'likesCount': 0,
         'comments': [],
         'commentsCount': 0,
-        'profileImageUrl': profileImageUrl, // Save the profile image URL with the post
+        'profileImageUrl': profileImageUrl,
       });
 
       final snackBar = SnackBar(
@@ -59,31 +88,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
     }
   }
 
-  Future<void> getUserData() async {
-    if (user != null) {
-      final DocumentSnapshot userDoc =
-      await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
-
-      if (userDoc.exists) {
-        final Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        setState(() {
-          username = userData['username'];
-          profileImageUrl = userData['image_url'] ?? profileImageUrl;
-        });
-      } else {
-        print('User document does not exist.');
-      }
-    } else {
-      print('No user is currently signed in.');
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getUserData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,7 +107,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$username',
+                        username,
                         style: TextStyle(
                             height: 1.4,
                             fontWeight: FontWeight.w600,

@@ -59,7 +59,7 @@ class _ListBabiesScreenState extends State<ListBabiesScreen> {
                     leading: CircleAvatar(
                       backgroundColor: Colors.blueAccent,
                       child: Text(
-                        baby['name']?[0]?.toUpperCase() ?? '',
+                        baby['name'] != null && baby['name'].isNotEmpty ? baby['name'][0].toUpperCase() : '',
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),

@@ -32,22 +32,24 @@ class _VaccenationScreenState extends State<VaccenationScreen> {
   late String gender = 'unknown';
 
   Future<void> getUserData() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String? uid = user?.uid;
+
     if (uid != null) {
       final DocumentSnapshot userDoc =
       await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final Map<String, dynamic> userData =
       userDoc.data() as Map<String, dynamic>;
+
       setState(() {
         username = userData['username'];
         gender = userData['gender'] ?? 'unknown';
       });
-      print('Email: ${userData['email']}');
-      print('Username: ${userData['username']}');
-      print('Gender: $gender');
     } else {
       print('No user is currently signed in.');
     }
   }
+
 
   Future<void> _scheduleNotification(
       String vaccineName, DateTime scheduleDate) async {

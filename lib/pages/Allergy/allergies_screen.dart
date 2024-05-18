@@ -13,10 +13,10 @@ class AllergiesScreen extends StatefulWidget {
 }
 
 class _AllergiesScreenState extends State<AllergiesScreen> {
+
   late String username = 'loading...';
   late String gender = 'unknown';
   late String profilePicUrl = '';
-
   Future<void> getUserData() async {
     final User? user = FirebaseAuth.instance.currentUser;
     final String? uid = user?.uid;
@@ -30,14 +30,11 @@ class _AllergiesScreenState extends State<AllergiesScreen> {
       setState(() {
         username = userData['username'];
         gender = userData['gender'] ?? 'unknown';
-        profilePicUrl = userData['profilePicUrl'] ??
-            'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'; // Default profile picture
       });
     } else {
       print('No user is currently signed in.');
     }
   }
-
   @override
   void initState() {
     super.initState();

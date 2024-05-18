@@ -28,17 +28,19 @@ class _BabyRoutineScreenState extends State<BabyRoutineScreen> {
   }
 
   Future<void> getUserGender() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String? uid = user?.uid;
+
     if (uid != null) {
-      final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      final DocumentSnapshot userDoc =
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final Map<String, dynamic> userData =
+      userDoc.data() as Map<String, dynamic>;
 
       setState(() {
-        if (userData.containsKey('gender') && userData['gender'].isNotEmpty) {
-          gender = userData['gender'];
-        }
+        gender = userData['gender'] ?? 'unknown';
+      print( 'gender $gender');
       });
-
-      print('Gender: $gender');
     } else {
       print('No user is currently signed in.');
     }

@@ -39,25 +39,22 @@ class _MedicalPerscriptionState extends State<MedicalPerscription> {
   }
 
   Future<void> getUserData() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String? uid = user?.uid;
+
     if (uid != null) {
       final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      final Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
 
-      setState(() {
-        if (userData.containsKey('username') && userData['username'].isNotEmpty) {
-          firstName = userData['username'].split(' ')[0];
-        }
-        if (userData.containsKey('profileImageUrl') && userData['profileImageUrl'].isNotEmpty) {
-          profileImageUrl = userData['profileImageUrl'];
-        }
-        if (userData.containsKey('gender') && userData['gender'].isNotEmpty) {
-          gender = userData['gender'];
-        }
-      });
-
-      print('Email: ${userData['email']}');
-      print('First name: $firstName');
-      print('Gender: $gender');
+      if (userData != null) {
+        setState(() {
+          profileImageUrl = userData['profileImageUrl'] ?? 'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'; // Default image if null
+          firstName = userData['username'] ?? 'loading...'; // Default name if null
+          gender = userData['gender'] ?? 'unknown'; // Default gender if null
+        });
+      } else {
+        print('No data found for the user.');
+      }
     } else {
       print('No user is currently signed in.');
     }
