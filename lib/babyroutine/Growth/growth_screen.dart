@@ -1,4 +1,3 @@
-// growth.dart
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +13,7 @@ class Growth extends StatefulWidget {
 
 class _GrowthState extends State<Growth> {
   final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
   final GrowthService _growthService = GrowthService();
   final _formKey = GlobalKey<FormState>();
 
@@ -36,7 +36,7 @@ class _GrowthState extends State<Growth> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _growthService.getWeightEntries(),
+              stream: _growthService.getEntries(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
@@ -46,9 +46,9 @@ class _GrowthState extends State<Growth> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                final weightEntries = snapshot.data!.docs;
-                if (weightEntries.isEmpty) {
-                  return  Container(
+                final entries = snapshot.data!.docs;
+                if (entries.isEmpty) {
+                  return Container(
                     height: 200, // Set a fixed height for the container
                     child: SizedBox(
                       child: Column(
@@ -76,15 +76,16 @@ class _GrowthState extends State<Growth> {
                 }
 
                 return ListView.builder(
-                  itemCount: weightEntries.length,
+                  itemCount: entries.length,
                   itemBuilder: (context, index) {
-                    final entry = weightEntries[index];
+                    final entry = entries[index];
                     final weight = entry['weight'];
+                    final height = entry['height'];
                     final entryDate = entry['entryDate'] != null
                         ? DateFormat('yyyy-MM-dd HH:mm:ss').format((entry['entryDate'] as Timestamp).toDate())
                         : '';
                     return ListTile(
-                      title: Text('$weight kg'),
+                      title: Text('Weight: $weight kg, Height: $height cm'),
                       subtitle: Text(entryDate),
                     );
                   },
@@ -116,12 +117,32 @@ class _GrowthState extends State<Growth> {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _heightController,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter height';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Enter Height (cm)',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         try {
-                          await _growthService.addWeightEntry(_weightController.text.trim());
+                          await _growthService.addEntry(
+                            _weightController.text.trim(),
+                            _heightController.text.trim(),
+                          );
                           _weightController.clear();
+                          _heightController.clear();
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Error: $e')),
@@ -133,7 +154,7 @@ class _GrowthState extends State<Growth> {
                       backgroundColor: MaterialStateProperty.all(const Color(0xff49CCD3)),
                     ),
                     child: const Text(
-                      "Add Weight",
+                      "Add Entry",
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
@@ -145,7 +166,6 @@ class _GrowthState extends State<Growth> {
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -153,23 +173,24 @@ class _GrowthState extends State<Growth> {
 }
 
 class GrowthService {
-  final CollectionReference _weightCollection = FirebaseFirestore.instance.collection('weight_entries');
+  final CollectionReference _collection = FirebaseFirestore.instance.collection('entries');
 
-  Future<void> addWeightEntry(String weight) async {
+  Future<void> addEntry(String weight, String height) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await _weightCollection.add({
+      await _collection.add({
         'userId': user.uid,
         'weight': double.parse(weight),
+        'height': double.parse(height),
         'entryDate': Timestamp.now(),
       });
     }
   }
 
-  Stream<QuerySnapshot> getWeightEntries() {
+  Stream<QuerySnapshot> getEntries() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      return _weightCollection.where('userId', isEqualTo: user.uid).snapshots();
+      return _collection.where('userId', isEqualTo: user.uid).snapshots();
     }
     return Stream.empty();
   }

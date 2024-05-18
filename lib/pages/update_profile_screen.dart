@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -219,18 +220,17 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     SizedBox(height: 25),
                     TextFormField(
                       controller: _phoneController,
+                      keyboardType: TextInputType.number, // Ensures the keyboard shows numbers
                       decoration: InputDecoration(
-                        label: Text('Phone No', style: GoogleFonts.poppins()),
+                        labelText: 'Phone No',
                         prefixIcon: Icon(Icons.phone_rounded),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your phone number';
-                        }
-                        return null;
-                      },
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly, // Allows only digits
+                      ],
                     ),
+
                     SizedBox(height: 25),
                     TextFormField(
                       controller: _passwordController,

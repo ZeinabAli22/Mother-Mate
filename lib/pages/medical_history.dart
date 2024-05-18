@@ -11,10 +11,6 @@ class MedicalHistoryScreen extends StatefulWidget {
   State<MedicalHistoryScreen> createState() => _MedicalHistoryScreenState();
 }
 
-final FirebaseAuth auth = FirebaseAuth.instance;
-final User? user = auth.currentUser;
-final String? uid = user?.uid;
-
 class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
   void openAllergieScreen() {
     Navigator.pushNamed(context, 'allergies_screen');
@@ -22,19 +18,24 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
 
   late String username = 'loading...';
   String profileImageUrl = '';
+  String gender = 'Boy'; // Default value
 
   Future<void> getUserData() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final String? uid = user?.uid;
+
     if (uid != null) {
-      final DocumentSnapshot userDoc =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final Map<String, dynamic> userData =
-      userDoc.data() as Map<String, dynamic>;
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
       setState(() {
         username = userData['username'].split(' ')[0]; // Get the first name only
         profileImageUrl = userData['image_url'] ?? 'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg';
+        gender = userData['gender'] ?? 'Boy'; // Get the gender
       });
       print('Email: ${userData['email']}');
       print('Username: ${userData['username']}');
+      print('Gender: ${userData['gender']}');
     } else {
       print('No user is currently signed in.');
     }
@@ -49,9 +50,9 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[300],
+      backgroundColor: gender == 'Boy' ? Colors.blue[300] : Colors.pink[200],
       appBar: AppBar(
-        backgroundColor: Colors.blue[300],
+        backgroundColor: gender == 'Boy' ? Colors.blue[300] : Colors.pink[200],
         elevation: 0.0,
         title: Row(
           children: [
@@ -71,7 +72,6 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
             ),
           ],
         ),
-
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -101,7 +101,6 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              // 2nd category
               InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, 'doctor_screen');
@@ -136,7 +135,6 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              // 3rd category
               InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, 'baby_routine');
@@ -181,7 +179,6 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              // 5th category
               InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, 'medical_perspective');

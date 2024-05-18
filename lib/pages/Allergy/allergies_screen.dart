@@ -1,7 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AllergiesScreen extends StatefulWidget {
@@ -12,22 +13,66 @@ class AllergiesScreen extends StatefulWidget {
 }
 
 class _AllergiesScreenState extends State<AllergiesScreen> {
+  late String username = 'loading...';
+  late String gender = 'unknown';
+  late String profilePicUrl = '';
+
+  Future<void> getUserData() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String? uid = user?.uid;
+
+    if (uid != null) {
+      final DocumentSnapshot userDoc =
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final Map<String, dynamic> userData =
+      userDoc.data() as Map<String, dynamic>;
+
+      setState(() {
+        username = userData['username'];
+        gender = userData['gender'] ?? 'unknown';
+        profilePicUrl = userData['profilePicUrl'] ??
+            'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'; // Default profile picture
+      });
+    } else {
+      print('No user is currently signed in.');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    Color backgroundColor = gender == 'Boy'
+        ? Colors.blue[300]!
+        : gender == 'Girl'
+        ? Colors.pink[300]!
+        : Colors.grey[300]!;
+
     return Scaffold(
-      backgroundColor: Colors.blue[300],
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.blue[300],
+        backgroundColor: backgroundColor,
         elevation: 0.0,
-        title: const Row(children: [
+        title: Row(children: [
           CircleAvatar(
             radius: 25.0,
-            backgroundImage: NetworkImage(
-                'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg'),
+            backgroundImage: NetworkImage(profilePicUrl),
           ),
           SizedBox(
             width: 10,
+          ),
+          Text(
+            'Hello, $username',
+            style: TextStyle(
+              color: Colors.indigo,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ]),
         actions: [
@@ -45,7 +90,7 @@ class _AllergiesScreenState extends State<AllergiesScreen> {
           Container(
             height: size.height * .45,
             decoration: BoxDecoration(
-              color: Colors.blue[300],
+              color: backgroundColor,
             ),
           ),
           Padding(
@@ -61,22 +106,6 @@ class _AllergiesScreenState extends State<AllergiesScreen> {
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   )),
-              // Container(
-              //   margin: const EdgeInsets.symmetric(vertical: 20),
-              //   padding:
-              //       const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(20),
-              //   ),
-              //   child: TextFormField(
-              //     decoration: InputDecoration(
-              //       hintText: "Search",
-              //       icon: SvgPicture.asset('asset/images/search.svg'),
-              //       border: InputBorder.none,
-              //     ),
-              //   ),
-              // ),
               const SizedBox(
                 height: 15,
               ),
@@ -103,11 +132,9 @@ class AllergyCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(
@@ -133,12 +160,7 @@ class AllergyCard extends StatelessWidget {
             Image.asset(
               'asset/images/Allergie.png',
               height: 180,
-              // width: 110,
-              // alignment: Alignment.topLeft,
             ),
-            // const SizedBox(
-            //   width: 20,
-            // ),
           ],
         ),
       ),

@@ -1,18 +1,13 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-// import 'package:proj_app/pages/Videos/videos.dart';
-
-// import 'Sign.dart';
 
 class HomeScreenB extends StatefulWidget {
   const HomeScreenB({Key? key}) : super(key: key);
+
   @override
   State<HomeScreenB> createState() => _HomeScreenBState();
 }
@@ -32,6 +27,7 @@ class _HomeScreenBState extends State<HomeScreenB> {
 
   late String firstName = 'loading...';
   String profileImageUrl = '';
+  Color backgroundColor = Color(0XFFA3D5FF); // Default color for boy
 
   Future<void> getUserData() async {
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -40,14 +36,18 @@ class _HomeScreenBState extends State<HomeScreenB> {
 
     if (uid != null) {
       final DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final Map<String, dynamic> userData =
-          userDoc.data() as Map<String, dynamic>;
+      userDoc.data() as Map<String, dynamic>;
       setState(() {
-        firstName =
-            userData['username'].split(' ')[0]; // Get the first name only
+        firstName = userData['username'].split(' ')[0]; // Get the first name only
         profileImageUrl = userData['image_url'] ??
             'https://i.pinimg.com/564x/c4/60/df/c460df55349b39d267199699b698598a.jpg';
+        if (userData['gender'] == 'Girl') {
+          backgroundColor = Colors.pink[200]!;
+        } else {
+          backgroundColor = Color(0XFFA3D5FF);
+        }
       });
       print(' Email: ${userData['email']}');
       print(' username: ${userData['username']}');
@@ -66,335 +66,347 @@ class _HomeScreenBState extends State<HomeScreenB> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.blue[300],
+      statusBarColor: backgroundColor,
       statusBarIconBrightness: Brightness.dark,
     ));
 
     return SafeArea(
       child: Scaffold(
-        // backgroundColor: Colors.blue[200],
-        backgroundColor: Color(0XFFA3D5FF),
+        backgroundColor: backgroundColor,
         body: Stack(
           children: <Widget>[
             Container(
               height: size.height * .45,
-              decoration: BoxDecoration(color: Color(0XFFA3D5FF)),
+              decoration: BoxDecoration(color: backgroundColor),
             ),
             SafeArea(
-                child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 70),
-                        child: Text("Mother Mate",
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding:
+                          EdgeInsets.symmetric(horizontal: size.width * 0.15),
+                          child: Text(
+                            "Mother Mate",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
-                              fontSize: 35,
+                              fontSize: size.width * 0.09,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                            )),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Hello,  ",
-                        textAlign: TextAlign.start,
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        "$firstName ! ",
-                        textAlign: TextAlign.start,
-                        style: GoogleFonts.poppins(
-                          // color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, 'profile_screen');
-                        },
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundImage: NetworkImage(profileImageUrl),
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Upcoming Appointments:',
-                        style: GoogleFonts.poppins(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Cards(
-                        title: 'Dr.Laila',
-                        subtitle: '09:30 AM',
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Services:",
-                        textAlign: TextAlign.start,
-                        style: GoogleFonts.poppins(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      // Spacer(),
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     Navigator.of(context).pushReplacement(
-                      //       MaterialPageRoute(
-                      //         builder: (context) => Signup(),
-                      //       ),
-                      //     );
-                      //   },
-                      //   style: ButtonStyle(
-                      //     backgroundColor:
-                      //         MaterialStateProperty.all<Color>(Colors.red),
-                      //   ),
-                      //   child: Text(
-                      //     'Logout',
-                      //     style: TextStyle(
-                      //       fontSize: 16,
-                      //       color: Colors.white,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount: 2,
-                      // childAspectRatio: 1.0,
-                      crossAxisSpacing: 55,
-                      mainAxisSpacing: 35,
-                      children: <Widget>[
-                        const CategoryCard(
-                          title: "MotherHood \n Community",
-                          svgSrc: 'asset/images/Medical.png',
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Color(0XFF3D6196),
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: const [
-                              BoxShadow(
-                                offset: Offset(0, 13),
-                                blurRadius: 17,
-                                spreadRadius: -23,
-                              ),
-                            ],
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: openMedicalScreen,
-                              child: Column(
-                                children: <Widget>[
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                  const Image(
-                                    image: AssetImage("asset/images/Pill.png"),
-                                    height: 100,
-                                    width: 100,
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    "Medical History",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Color(0XFF2F6C4F),
-                            // color: Color(0XFFC97777),
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: const [
-                              BoxShadow(
-                                offset: Offset(0, 13),
-                                blurRadius: 17,
-                                spreadRadius: -23,
-                              ),
-                            ],
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: openEntertainScreen,
-                              child: Column(
-                                children: <Widget>[
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                  Image.asset(
-                                    'asset/images/Rectangle.png',
-                                    scale: 0.8,
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    "Entertainment",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey[900],
-                            // color: Color(0XF000000),
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: const [
-                              BoxShadow(
-                                offset: Offset(0, 13),
-                                blurRadius: 17,
-                                spreadRadius: -23,
-                              ),
-                            ],
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: openInstructionScreen,
-                              child: Column(
-                                children: <Widget>[
-                                  const SizedBox(
-                                    height: 14,
-                                  ),
-                                  const Image(
-                                    image:
-                                        AssetImage("asset/images/Instruct.png"),
-                                    height: 80,
-                                    width: 80,
-                                  ),
-                                  Text(
-                                    "Mother\nInstructions",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Nearby Doctors:",
-                        textAlign: TextAlign.start,
-                        style: GoogleFonts.inter(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      autoPlay: true,
-                      autoPlayInterval: Duration(seconds: 3),
-                      height: 125,
-                      enlargeCenterPage: false,
-                      aspectRatio: 16 / 9,
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enableInfiniteScroll: true,
+                    SizedBox(
+                      height: size.height * 0.02,
                     ),
-                    items: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 20),
-                          height: 125,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(13),
+                    Row(
+                      children: [
+                        Text(
+                          "Hello,  ",
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.poppins(
+                            fontSize: size.width * 0.05,
+                            fontWeight: FontWeight.w700,
                           ),
-                          child: Row(
-                            children: [
-                              const Image(
-                                  image: AssetImage('asset/images/Image.png')),
-                              Expanded(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Dr.Mazen",
-                                    style: GoogleFonts.poppins(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "About 800m Away from your Location",
-                                    style: GoogleFonts.poppins(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w400),
+                        ),
+                        Text(
+                          "$firstName ! ",
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.poppins(
+                            fontSize: size.width * 0.05,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Spacer(),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, 'profile_screen');
+                          },
+                          child: CircleAvatar(
+                            radius: size.width * 0.06,
+                            backgroundImage: NetworkImage(profileImageUrl),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.02,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Upcoming Appointments:',
+                          style: GoogleFonts.poppins(
+                              fontSize: size.width * 0.05,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Cards(
+                          title: 'Dr.Laila',
+                          subtitle: '09:30 AM',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Services:",
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.poppins(
+                            fontSize: size.width * 0.06,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.008,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: size.height * 0.02),
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: size.width * 0.05,
+                          mainAxisSpacing: size.height * 0.03,
+                          children: <Widget>[
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Color(0XFFC97777),
+                                borderRadius: BorderRadius.circular(size.width * 0.04),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    offset: Offset(0, 13),
+                                    blurRadius: 17,
+                                    spreadRadius: -23,
                                   ),
                                 ],
-                              ))
-                            ],
-                          ),
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, 'home_layout');
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Image.asset(
+                                        'asset/images/Medical.png',
+                                        height: size.height * 0.1,
+                                        width: size.width * 0.3,
+                                      ),
+                                      Text(
+                                        "MotherHood \n Community",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: size.width * 0.04,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Color(0XFF3D6196),
+                                borderRadius: BorderRadius.circular(size.width * 0.04),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    offset: Offset(0, 13),
+                                    blurRadius: 17,
+                                    spreadRadius: -23,
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: openMedicalScreen,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Image.asset(
+                                        "asset/images/Pill.png",
+                                        height: size.height * 0.12,
+                                        width: size.width * 0.3,
+                                      ),
+                                      Text(
+                                        "Medical History",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: size.width * 0.04,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Color(0XFF2F6C4F),
+                                borderRadius: BorderRadius.circular(size.width * 0.04),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    offset: Offset(0, 13),
+                                    blurRadius: 17,
+                                    spreadRadius: -23,
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: openEntertainScreen,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Image.asset(
+                                        'asset/images/Rectangle.png',
+                                        height: size.height * 0.12,
+                                        width: size.width * 0.3,
+                                      ),
+                                      Text(
+                                        "Entertainment",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: size.width * 0.04,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey[900],
+                                borderRadius: BorderRadius.circular(size.width * 0.04),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    offset: Offset(0, 13),
+                                    blurRadius: 17,
+                                    spreadRadius: -23,
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: openInstructionScreen,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Image.asset(
+                                        "asset/images/Instruct.png",
+                                        height: size.height * 0.1,
+                                        width: size.width * 0.3,
+                                      ),
+                                      Text(
+                                        "Mother\nInstructions",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: size.width * 0.04,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Nearby Doctors:",
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.inter(
+                            fontSize: size.width * 0.05,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 2),
+
+                    CarouselSlider(
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 3),
+                        height: size.height * 0.12,
+                        enlargeCenterPage: false,
+                        aspectRatio: 16 / 9,
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        enableInfiniteScroll: true,
+                      ),
+                      items: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(size.width * 0.03),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'asset/images/Image.png',
+                                  height: size.height * 0.15,
+                                  width: size.width * 0.3,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Dr.Mazen",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: size.width * 0.05,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        "About 800m Away from your Location",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: size.width * 0.04,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8,),
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
@@ -414,12 +426,12 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
     return Container(
       decoration: BoxDecoration(
         color: Color(0XFFC97777),
-        // color: Color(0XFFFFEBAE),
-        // color: Color(0XFF557478),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(size.width * 0.04),
         boxShadow: const [
           BoxShadow(
             offset: Offset(0, 13),
@@ -435,23 +447,22 @@ class CategoryCard extends StatelessWidget {
             Navigator.pushNamed(context, 'home_layout');
           },
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(
-                height: 15,
-              ),
               Image.asset(
                 svgSrc,
-                scale: 0.8,
+                height: size.height * 0.15,
+                width: size.width * 0.3,
               ),
               Text(
                 title,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(
-                  fontSize: 15,
+                  fontSize: size.width * 0.04,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -472,13 +483,13 @@ class Cards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    var size = MediaQuery.of(context).size;
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: screenWidth * 0.04),
+      margin: EdgeInsets.symmetric(vertical: size.width * 0.04),
       decoration: BoxDecoration(
         color: Color(0XFF213052),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(size.width * 0.05),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
@@ -492,12 +503,12 @@ class Cards extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              bottomLeft: Radius.circular(20),
+              topLeft: Radius.circular(size.width * 0.05),
+              bottomLeft: Radius.circular(size.width * 0.05),
             ),
             child: Container(
-              height: screenWidth * 0.2,
-              width: screenWidth * 0.2,
+              height: size.width * 0.2,
+              width: size.width * 0.2,
               decoration: BoxDecoration(
                 color: Color(0xFF2EBFDF),
               ),
@@ -506,13 +517,13 @@ class Cards extends StatelessWidget {
                 child: Text(
                   '9 MAY',
                   style: GoogleFonts.poppins(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                      fontSize: size.width * 0.04, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
           ),
-          SizedBox(width: screenWidth * 0.10),
+          SizedBox(width: size.width * 0.1),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -520,8 +531,7 @@ class Cards extends StatelessWidget {
                 title,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
-                  // fontWeight: FontWeight.bold,
-                  fontSize: screenWidth * 0.05,
+                  fontSize: size.width * 0.05,
                   color: Colors.white,
                 ),
               ),
@@ -529,7 +539,7 @@ class Cards extends StatelessWidget {
                 subtitle,
                 style: GoogleFonts.inter(
                   fontWeight: FontWeight.w300,
-                  fontSize: screenWidth * 0.05,
+                  fontSize: size.width * 0.05,
                   color: Colors.white,
                 ),
               ),

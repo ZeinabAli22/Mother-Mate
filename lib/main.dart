@@ -27,6 +27,9 @@ import 'package:proj_app/pages/storie_screen.dart';
 import 'package:proj_app/pages/Vaccenation/vaccenation_screen.dart';
 import 'package:proj_app/pages/Videos/videos.dart';
 import 'package:proj_app/pages/update_profile_screen.dart';
+import 'package:proj_app/qr%20code%20scan.dart';
+import 'babyroutine/babydetails.dart';
+import 'editbaby.dart';
 import 'firebase_options.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:proj_app/layout/home_layout.dart';
@@ -90,11 +93,13 @@ class MyApp extends StatelessWidget {
         "/": (context) => const Jump(),
         // "sign": (context) => const Sign(),
         "signup": (context) => const Signup(),
+        'qr_scanner': (context) => QRScannerScreen(),
         "signuup": (context) => const SignUp(),
         "ScheduleScreen": (context) => ScheduleScreen(),
         "choosegender": (context) => const ChooseGender(),
         'homescreen': (context) => const Home(),
         "homescreenboy": (context) => const HomeScreenB(),
+        "editbaby": (context) => const EditBabyDetailsScreen(),
         "homescreengirl": (context) => const HomeScreenG(),
         "home_layout": (context) => const HomeLayout(),
         "Instruction": (context) => const InstructionScreen(),
@@ -116,6 +121,7 @@ class MyApp extends StatelessWidget {
         'game': (context) => const GameScreen(),
         'videos': (context) => const VideosScreen(),
         'jump': (context) => const Jump(),
+        'ListBabiesScreen': (context) => const ListBabiesScreen(),
         'onboarding_page': (context) => const OnBoardingPage(),
         'profile_screen': (context) => ProfileScreen(),
         'update_profile': (context) => UpdateProfileScreen(),

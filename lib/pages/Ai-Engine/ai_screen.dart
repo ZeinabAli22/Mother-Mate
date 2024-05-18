@@ -48,6 +48,12 @@ class _AiEngineScreenState extends State<AiEngineScreen>
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -116,8 +122,18 @@ class _AiEngineScreenState extends State<AiEngineScreen>
               height: 40,
             ),
             ElevatedButton(
-              onPressed: _analyzeCry,
-              child: Icon(Icons.mic, color: Colors.black54,),
+              onPressed: _startListening,
+              style: ElevatedButton.styleFrom(
+                primary: AppColors.greenColor,
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: Icon(
+                Icons.mic,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -125,20 +141,20 @@ class _AiEngineScreenState extends State<AiEngineScreen>
     );
   }
 
-  void _analyzeCry() {
+  void _startListening() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(20.0),
           ),
-          elevation: 0,
+          elevation: 10,
           backgroundColor: Colors.transparent,
           child: Container(
             padding: EdgeInsets.all(20.0),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(20.0),
               color: Colors.white,
             ),
             child: Column(
@@ -155,125 +171,159 @@ class _AiEngineScreenState extends State<AiEngineScreen>
                 SizedBox(
                   height: 10.0,
                 ),
-                CircularProgressIndicator(),
+                MicAnimation(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _analyzeCry();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: AppColors.greenColor,
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: Text(
+                    'Done',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
         );
       },
     );
+  }
 
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.of(context).pop();
+  void _analyzeCry() {
+    crySituations.shuffle();
 
-      crySituations.shuffle();
+    // Generate random percentages that sum to 100
+    final int percentage1 = randomPercentage(20, 60);
+    final int percentage2 = 100 - percentage1;
 
-      // Generate random percentages that sum to 100
-      final int percentage1 = randomPercentage(20, 60);
-      final int percentage2 = 100 - percentage1;
+    List<Map<String, dynamic>> results = [
+      {'situation': crySituations[0]['situation'], 'percentage': percentage1},
+      {'situation': crySituations[1]['situation'], 'percentage': percentage2},
+    ];
 
-      List<Map<String, dynamic>> results = [
-        {'situation': crySituations[0]['situation'], 'percentage': percentage1},
-        {'situation': crySituations[1]['situation'], 'percentage': percentage2},
-      ];
+    // Sort results to have the highest percentage at the top
+    results.sort((a, b) => b['percentage'].compareTo(a['percentage']));
 
-      // Sort results to have the highest percentage at the top
-      results.sort((a, b) => b['percentage'].compareTo(a['percentage']));
-
-      List<Widget> situationWidgets = results.map((result) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              result['situation'],
-              style: TextStyle(
-                fontSize: 18.0,
-              ),
+    List<Widget> situationWidgets = results.map((result) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            result['situation'],
+            style: TextStyle(
+              fontSize: 18.0,
             ),
-            Text(
-              '${result['percentage']}%',
-              style: TextStyle(
-                fontSize: 18.0,
-              ),
+          ),
+          Text(
+            '${result['percentage']}%',
+            style: TextStyle(
+              fontSize: 18.0,
             ),
-          ],
-        );
-      }).toList();
-
-      // Show notification
-      final highestResult = results[0];
-      final String notificationMessage = 'The baby may be ${highestResult['situation']} with a percentage of ${highestResult['percentage']}%.';
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(notificationMessage),
-          duration: Duration(seconds: 3),
-        ),
+          ),
+        ],
       );
+    }).toList();
 
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+    // Show notification
+    final highestResult = results[0];
+    final String notificationMessage =
+        'The baby may be ${highestResult['situation']} with a percentage of ${highestResult['percentage']}%.';
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(notificationMessage),
+        duration: Duration(seconds: 3),
+      ),
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          elevation: 10,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.0),
+              color: Colors.white,
             ),
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            child: Container(
-              padding: EdgeInsets.all(20.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Colors.white,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
+                    'Analysis Result',
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 5.0),
+                Container(
+                  height: 1,
+                  width: double.infinity,
+                  color: Colors.black54,
+                ),
+                SizedBox(height: 10.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: situationWidgets,
+                ),
+                SizedBox(height: 10.0),
+                Align(
+                  alignment: Alignment.center,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Show CircularProgressIndicator for 1 second
+
+                            Navigator.of(context).pop(); // Close the dialog
+
+
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: AppColors.greenColor,
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
                     child: Text(
-                      'Analysis Result',
+                      'OK',
                       style: TextStyle(
-                        fontSize: 22.0,
+                        fontSize: 18.0,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                  SizedBox(height: 5.0),
-                  Container(
-                    height: 1,
-                    width: double.infinity,
-                    color: Colors.black54,
-                  ),
-                  SizedBox(height: 10.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: situationWidgets,
-                  ),
-                  SizedBox(height: 10.0),
-                  Align(
-                    alignment: Alignment.center,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        'OK',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        },
-      );
-    });
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -315,5 +365,46 @@ class _CustomPaint extends CustomPainter {
     final radius = sqrt(area * value / 6);
     final paint = Paint()..color = _color;
     canvas.drawCircle(rect.center, radius, paint);
+  }
+}
+class MicAnimation extends StatefulWidget {
+  @override
+  _MicAnimationState createState() => _MicAnimationState();
+}
+
+class _MicAnimationState extends State<MicAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: Tween<double>(begin: 1.0, end: 1.5).animate(
+        CurvedAnimation(
+          parent: _animationController,
+          curve: Curves.easeInOut,
+        ),
+      ),
+      child: Icon(
+        Icons.mic,
+        size: 50,
+        color: AppColors.greenColor,
+      ),
+    );
   }
 }

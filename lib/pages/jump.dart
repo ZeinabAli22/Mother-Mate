@@ -14,7 +14,7 @@ class _JumpState extends State<Jump> {
   @override
   void initState() {
     Future.delayed(Duration(seconds: 3)).then(
-        (value) => Navigator.pushReplacementNamed(context, 'signup'));
+        (value) => Navigator.pushReplacementNamed(context, 'onboarding_page'));
     super.initState();
   }
 

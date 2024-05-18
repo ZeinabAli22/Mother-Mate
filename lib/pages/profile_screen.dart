@@ -114,6 +114,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 20,
               ),
               Divider(),
+              SizedBox(
+                height: 10,
+              ),
+              MenuItem(
+                title: 'baby details',
+                textColor: Colors.black,
+                icon: Icons.child_care,
+                onpress: () {
+                  Navigator.pushNamed(context, 'ListBabiesScreen');
+
+                },
+              ),
+              SizedBox(
+                height: 10,
+              ),
               MenuItem(
                 title: 'Help',
                 textColor: Colors.black,

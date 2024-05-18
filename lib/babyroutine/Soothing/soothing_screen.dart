@@ -10,6 +10,14 @@ class SoothingMain extends StatefulWidget {
 }
 
 class _SoothingMainState extends State<SoothingMain> {
+  List<String> sleepData = [];
+
+  void updateSleepData(String data) {
+    setState(() {
+      sleepData.add(data);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -37,8 +45,11 @@ class _SoothingMainState extends State<SoothingMain> {
             ],
           ),
         ),
-        body:  TabBarView(
-          children: [SoothingSleeping(), SoothingSummary()],
+        body: TabBarView(
+          children: [
+            SoothingSleeping(onFinish: updateSleepData),
+            SoothingSummary(sleepData: sleepData),
+          ],
         ),
       ),
     );

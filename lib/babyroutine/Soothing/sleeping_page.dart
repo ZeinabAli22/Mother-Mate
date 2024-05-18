@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SoothingSleeping extends StatefulWidget {
-  const SoothingSleeping({Key? key}) : super(key: key);
+  final Function(String) onFinish;
+
+  const SoothingSleeping({Key? key, required this.onFinish}) : super(key: key);
 
   @override
   State<SoothingSleeping> createState() => _SoothingSleepingState();
@@ -10,11 +14,11 @@ class SoothingSleeping extends StatefulWidget {
 
 class _SoothingSleepingState extends State<SoothingSleeping> {
   bool _isTimerRunning = false;
-  late Timer _timer;
+  Timer? _timer;
   int _secondsElapsed = 0;
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _secondsElapsed++;
       });
@@ -22,10 +26,11 @@ class _SoothingSleepingState extends State<SoothingSleeping> {
   }
 
   void _stopTimer() {
-    _timer.cancel();
+    _timer?.cancel();
   }
 
   void _resetTimer() {
+    _stopTimer();
     setState(() {
       _isTimerRunning = false;
       _secondsElapsed = 0;
@@ -49,6 +54,37 @@ class _SoothingSleepingState extends State<SoothingSleeping> {
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return "$twoDigitMinutes:$twoDigitSeconds";
+  }
+
+  Future<void> _finishSleep() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final uid = user.uid;
+      String sleepData = "Slept for ${_secondsElapsed ~/ 3600} hours, ${(_secondsElapsed % 3600) ~/ 60} minutes, and ${_secondsElapsed % 60} seconds";
+
+      await FirebaseFirestore.instance.collection('users').doc(uid).collection('sleepData').add({
+        'timestamp': FieldValue.serverTimestamp(),
+        'sleepDuration': sleepData,
+      });
+
+      widget.onFinish(sleepData);
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Sleep Timer Finished"),
+          content: Text("Total sleep time: ${_formatTime(_secondsElapsed)}"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resetTimer();              },
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -98,7 +134,7 @@ class _SoothingSleepingState extends State<SoothingSleeping> {
                     ),
                     child: Column(
                       children: [
-                        Expanded(flex: 1, child: Container()),
+                        const Expanded(flex: 1, child: SizedBox()),
                         Expanded(
                           flex: 4,
                           child: Image.asset('asset/images/baby-face.png'),
@@ -107,7 +143,7 @@ class _SoothingSleepingState extends State<SoothingSleeping> {
                           flex: 1,
                           child: Text(
                             _isTimerRunning ? _formatTime(_secondsElapsed) : "Start",
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Color(0xff49CCD3),
                               fontSize: 25,
@@ -136,7 +172,22 @@ class _SoothingSleepingState extends State<SoothingSleeping> {
             ),
           ),
         ),
-        SizedBox( height: 20,)
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: _finishSleep,
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(const Color(0xff49CCD3)),
+          ),
+          child: const Text(
+            "Finish",
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
       ],
     );
   }

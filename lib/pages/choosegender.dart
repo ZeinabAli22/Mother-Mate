@@ -1,11 +1,8 @@
-// ignore_for_file: non_constant_identifier_names, prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:proj_app/widget/custom_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChooseGender extends StatefulWidget {
   const ChooseGender({Key? key}) : super(key: key);
@@ -15,15 +12,33 @@ class ChooseGender extends StatefulWidget {
 }
 
 class _ChooseGenderState extends State<ChooseGender> {
-//HomeScreenBoy
+  void openHomeScreenBoy() {
+    saveGender('Boy');
+    Navigator.of(context).pushNamed('homescreenboy');
+  }
 
-  // void openHomeScreen() {
-  //   Navigator.of(context).pushNamed('homescreenboy');
-  // }
+  void openHomeScreenGirl() {
+    saveGender('Girl');
+    Navigator.of(context).pushNamed('homescreenboy');
+  }
 
-  // void openHomeScreenGirl() {
-  //   Navigator.of(context).pushNamed('homescreengirl');
-  // }
+  Future<void> saveGender(String gender) async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid != null) {
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'gender': gender,
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to save gender.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,106 +46,49 @@ class _ChooseGenderState extends State<ChooseGender> {
       child: Scaffold(
         extendBody: true,
         extendBodyBehindAppBar: true,
-        body: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('asset/images/image 28.png'),
-              fit: BoxFit.cover,
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('asset/images/image 28.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
-          child: SizedBox(
-            width: 443,
-            child: Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const SizedBox(
-                  height: 350,
-                ),
-                // Expanded(
-                //   child: SingleChildScrollView(
-                //     child: _buildThreeSection(context),
-                //   ),
-                // ),
-                const SizedBox(
-                  height: 290,
-                ),
-                Expanded(
-                    child: SingleChildScrollView(
-                  child: _FourSection(context),
-                )),
+                _FourSection(context, openHomeScreenBoy, openHomeScreenGirl),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
 
-// Widget _buildThreeSection(BuildContext context) {
-//   return Container(
-//     margin: const EdgeInsets.symmetric(horizontal: 34),
-//     padding: const EdgeInsets.symmetric(horizontal: 27, vertical: 11),
-//     decoration: BoxDecoration(
-//       borderRadius: BorderRadius.circular(40),
-//       // shape: BoxShape.circle,
-//       color: Colors.white,
-//     ),
-//     child: Column(
-//       mainAxisSize: MainAxisSize.min,
-//       children: [
-//         Text(
-//           "Child's Name",
-//           style: GoogleFonts.poppins(
-//             fontSize: 25,
-//             fontWeight: FontWeight.w600,
-//           ),
-//         ),
-//         const SizedBox(
-//           height: 25,
-//         ),
-//         // const CustomTextFormField(),
-//         // const SizedBox(
-//         //   height: 15,
-//         // ),
-//       ],
-//     ),
-//   );
-// }
-
-Widget _FourSection(BuildContext context) {
-  // void openHomeScreen() {
-  //   Navigator.of(context).pushNamed('homeboy');
-  // }
-
-  void openHomeScreenBoy() {
-    Navigator.of(context).pushNamed('homescreenboy');
-  }
-
-  void openHomeScreenGirl() {
-    Navigator.of(context).pushNamed('homescreengirl');
-  }
-
+Widget _FourSection(BuildContext context, VoidCallback openHomeScreenBoy, VoidCallback openHomeScreenGirl) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+    margin: const EdgeInsets.all(20),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(50),
       color: Colors.white,
     ),
     child: Column(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const SizedBox(
-          height: 5,
-        ),
         Padding(
           padding: const EdgeInsets.all(10),
-          child: Text("Choose Gender",
-              style: GoogleFonts.inter(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              )),
+          child: Text(
+            "Choose Gender",
+            style: GoogleFonts.inter(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(20),
@@ -150,27 +108,23 @@ Widget _FourSection(BuildContext context) {
                         Text(
                           "Girl",
                           style: GoogleFonts.lemon(
-                              fontSize: 25, fontWeight: FontWeight.w500),
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         SvgPicture.asset(
                           "asset/images/women-line.svg",
                           height: 50,
                           width: 50,
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(
-                width: 35,
-              ),
+              const SizedBox(width: 35),
               Expanded(
                 child: GestureDetector(
                   onTap: openHomeScreenBoy,
@@ -185,26 +139,21 @@ Widget _FourSection(BuildContext context) {
                         Text(
                           "Boy",
                           style: GoogleFonts.lemon(
-                              fontSize: 25, fontWeight: FontWeight.w500),
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         SvgPicture.asset(
                           "asset/images/men-line.svg",
                           height: 50,
                           width: 50,
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
               ),
             ],
           ),
@@ -213,252 +162,3 @@ Widget _FourSection(BuildContext context) {
     ),
   );
 }
-
-// class ChooseGender extends StatefulWidget {
-//   const ChooseGender({super.key});
-
-//   @override
-//   State<ChooseGender> createState() => _ChooseGenderState();
-// }
-
-// class _ChooseGenderState extends State<ChooseGender> {
-//   void openHomeScreen() {
-//     Navigator.of(context).pushNamed('homescreenboy');
-//   }
-
-//   void openHomeScreenGirl() {
-//     Navigator.of(context).pushNamed('homescreengirl');
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Container(
-//         child: Row(
-//           mainAxisAlignment: MainAxisAlignment.end,
-//           crossAxisAlignment: CrossAxisAlignment.end,
-//           children: [
-//             // Container(
-//             //   margin: const EdgeInsets.symmetric(horizontal: 34),
-//             //   // padding: const EdgeInsets.symmetric(horizontal: 27, vertical: 11),
-//             //   decoration: BoxDecoration(
-//             //     borderRadius: BorderRadius.circular(40),
-//             //     // shape: BoxShape.circle,
-//             //     color: Colors.white,
-//             //   ),
-//             //   child: Column(
-//             //     children: [
-//             //       Text(
-//             //         "Choose Gender",
-//             //         style: GoogleFonts.poppins(
-//             //           fontSize: 25,
-//             //           fontWeight: FontWeight.w600,
-//             //         ),
-//             //       ),
-//             //       const SizedBox(
-//             //         height: 25,
-//             //       ),
-//             //     ],
-//             //   ),
-//             // ),
-//             Expanded(
-//               child: GestureDetector(
-//                 onTap: openHomeScreenGirl,
-//                 child: Container(
-//                   color: Colors.pink[100],
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Text(
-//                         "Girl",
-//                         style: GoogleFonts.lemon(
-//                             fontSize: 45, fontWeight: FontWeight.w500),
-//                       ),
-//                       const SizedBox(
-//                         height: 10,
-//                       ),
-//                       SvgPicture.asset(
-//                         "asset/images/women-line.svg",
-//                         height: 100,
-//                         width: 50,
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ),
-//             Expanded(
-//               child: GestureDetector(
-//                 onTap: openHomeScreen,
-//                 child: Container(
-//                   color: Colors.blue[200],
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Text(
-//                         "Boy",
-//                         style: GoogleFonts.lemon(
-//                             fontSize: 45, fontWeight: FontWeight.w500),
-//                       ),
-//                       const SizedBox(
-//                         height: 10,
-//                       ),
-//                       SvgPicture.asset(
-//                         "asset/images/men-line.svg",
-//                         height: 100,
-//                         width: 50,
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class ChooseGender extends StatefulWidget {
-//   const ChooseGender({super.key});
-
-//   @override
-//   State<ChooseGender> createState() => _ChooseGenderState();
-// }
-
-// class _ChooseGenderState extends State<ChooseGender> {
-//   void openHomeScreen() {
-//     Navigator.of(context).pushNamed('homescreenboy');
-//   }
-
-//   void openHomeScreenGirl() {
-//     Navigator.of(context).pushNamed('homescreengirl');
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       decoration: BoxDecoration(
-//         gradient: LinearGradient(
-//           colors: [
-//             // Color.fromARGB(255, 77, 82, 189),
-//             // Color.fromARGB(255, 212, 99, 205)
-//             Colors.blue.shade300,
-//             Colors.pink.shade300,
-//           ],
-//           begin: Alignment.bottomCenter,
-//           end: Alignment.topCenter,
-//         ),
-//       ),
-//       child: Scaffold(
-//         backgroundColor: Colors.transparent,
-//         body: Column(
-//           mainAxisAlignment: MainAxisAlignment.start,
-//           // alignment: Alignment.topLeft,
-//           children: [
-//             SafeArea(
-//               child: Column(
-//                 // mainAxisSize: MainAxisSize.min,
-//                 mainAxisAlignment: MainAxisAlignment.start,
-//                 children: [
-//                   Padding(
-//                     padding: const EdgeInsets.symmetric(
-//                         horizontal: 15, vertical: 150),
-//                     child: Text(
-//                       'Choose Gender',
-//                       style: GoogleFonts.poppins(
-//                           fontWeight: FontWeight.bold, fontSize: 30),
-//                       textAlign: TextAlign.start,
-//                     ),
-//                   ),
-//                   SizedBox(
-//                     height: 15,
-//                   ),
-//                   Row(
-//                     children: [
-//                       Expanded(
-//                         child: GestureDetector(
-//                           onTap: openHomeScreenGirl,
-//                           child: Container(
-//                             padding: EdgeInsets.all(10),
-//                             decoration: BoxDecoration(
-//                               // borderRadius: BorderRadius.circular(20),
-//                               shape: BoxShape.circle,
-//                               color: Colors.pink[100],
-//                             ),
-//                             child: Column(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               children: [
-//                                 Text(
-//                                   "Girl",
-//                                   style: GoogleFonts.lemon(
-//                                       fontSize: 25,
-//                                       fontWeight: FontWeight.w500),
-//                                 ),
-//                                 const SizedBox(
-//                                   height: 10,
-//                                 ),
-//                                 SvgPicture.asset(
-//                                   "asset/images/women-line.svg",
-//                                   height: 50,
-//                                   width: 50,
-//                                 ),
-//                                 const SizedBox(
-//                                   height: 10,
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                       const SizedBox(
-//                         width: 20,
-//                       ),
-//                       Expanded(
-//                         child: GestureDetector(
-//                           onTap: openHomeScreen,
-//                           child: Container(
-//                             padding: EdgeInsets.all(15),
-//                             decoration: BoxDecoration(
-//                               // borderRadius: BorderRadius.circular(30),
-//                               shape: BoxShape.circle,
-
-//                               color: Colors.blue[200],
-//                             ),
-//                             child: Column(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               children: [
-//                                 Text(
-//                                   "Boy",
-//                                   style: GoogleFonts.lemon(
-//                                       fontSize: 25,
-//                                       fontWeight: FontWeight.w500),
-//                                 ),
-//                                 const SizedBox(
-//                                   height: 10,
-//                                 ),
-//                                 SvgPicture.asset(
-//                                   "asset/images/men-line.svg",
-//                                   height: 50,
-//                                   width: 50,
-//                                 ),
-//                                 const SizedBox(
-//                                   height: 10,
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
